@@ -6,8 +6,8 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&amp;family=Sora:wght@300;400;500;600;700;800&amp;family=Instrument+Serif:ital@0;1&amp;display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <!-- Firebase SDKs -->
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js" onerror="console.warn('firebase-app-compat failed to load — local storage mode will be used.')"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js" onerror="console.warn('firebase-firestore-compat failed to load — local storage mode will be used.')"></script>
 <style>
 
 
@@ -193,13 +193,17 @@ body {
   border-radius: var(--r);
   padding: 10px 8px;
 }
-.ss-val { font-family: var(--mono); font-size: 20px; color: #fff; font-weight: 500; }
-.ss-lbl { font-size: 9.5px; color: rgba(255,255,255,.3); margin-top: 2px; font-weight: 500; letter-spacing: .05em; text-transform: uppercase; }
+.ss-val { font-family: var(--mono); font-size: 20px; color: #fff; font-weight: 700; }
+.ss-lbl { font-size: 9.5px; color: rgba(255,255,255,.3); margin-top: 2px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
+#ss-open         { color: #4ade80; }
+#ss-open-lbl     { color: rgba(74,222,128,.7); }
+#ss-resolved     { color: #f87171; }
+#ss-resolved-lbl { color: rgba(248,113,113,.7); }
 
 .clock-bar {
   padding: 10px 14px; border-top: 1px solid rgba(255,255,255,.07);
   font-family: var(--mono); font-size: 10.5px;
-  color: rgba(255,255,255,.22); line-height: 1.9;
+  color: rgba(255,255,255,.9); line-height: 1.9;
   position: relative; z-index: 1;
 }
 
@@ -597,8 +601,81 @@ body {
 .mts-val { font-family: var(--mono); font-size: 22px; font-weight: 400; letter-spacing: -.03em; }
 .mts-lbl { font-family: var(--mono); font-size: 9px; color: var(--ink3); margin-top: 2px; text-transform: uppercase; letter-spacing: .1em; }
 
+/* ─── FORGOT PASSWORD ─── */
+.forgot-link { text-align: right; margin-top: -4px; margin-bottom: 10px; }
+.forgot-link button { background: none; border: none; color: var(--accent); font-size: 12px; cursor: pointer; padding: 0; font-family: var(--sans); text-decoration: underline; text-underline-offset: 2px; }
+.forgot-link button:hover { color: var(--ink); }
+.forgot-modal-overlay { display: none; position: fixed; inset: 0; z-index: 1200; background: rgba(0,0,0,.48); align-items: center; justify-content: center; }
+.forgot-modal-overlay.open { display: flex; }
+.forgot-modal-box { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--r-lg); padding: 28px; max-width: 400px; width: 94%; box-shadow: var(--shadow-lg); }
+.forgot-modal-box h3 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+.forgot-modal-sub { font-size: 12.5px; color: var(--ink2); line-height: 1.6; margin-bottom: 16px; }
+.forgot-info-box { background: var(--surface2); border: 1.5px solid var(--border); border-radius: var(--r); padding: 12px 14px; font-size: 12.5px; color: var(--ink2); line-height: 1.65; margin-bottom: 16px; }
+.forgot-info-box strong { color: var(--ink); }
+.btn-reset-pwd { display: inline-flex; align-items: center; gap: 4px; padding: 4px 9px; border-radius: 6px; border: 1.5px solid var(--border); background: var(--surface); color: var(--ink3); font-size: 11px; font-weight: 600; cursor: pointer; font-family: var(--sans); transition: all .14s; flex-shrink: 0; }
+.btn-reset-pwd:hover { background: var(--surface2); color: var(--ink); border-color: var(--border2); }
+
 /* ─── PRINT ─── */
 @media print { .sidebar, .topbar, .btn, .esc-actions, .upload-zone { display: none !important; } .main { overflow: visible; } .content-scroll { overflow: visible; padding: 0; } }
+
+/* ─── COMMENTS THREAD ─── */
+.comments-section { margin-top: 0; }
+.comment-item {
+  display: flex; gap: 10px; padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.comment-item:last-child { border-bottom: none; }
+.comment-avatar {
+  width: 28px; height: 28px; border-radius: 4px;
+  background: var(--ink); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700; flex-shrink: 0; margin-top: 1px;
+}
+.comment-avatar.ca-user { background: var(--accent); }
+.comment-meta { display: flex; align-items: baseline; gap: 8px; margin-bottom: 3px; }
+.comment-author { font-size: 12px; font-weight: 700; color: var(--ink); }
+.comment-ts { font-family: var(--mono); font-size: 10px; color: var(--ink3); }
+.comment-text { font-size: 13px; color: var(--ink2); line-height: 1.6; }
+.comment-post-row {
+  display: flex; gap: 8px; margin-top: 12px; align-items: flex-end;
+}
+.comment-post-row textarea {
+  flex: 1; border: 1.5px solid var(--border); border-radius: var(--r);
+  padding: 9px 12px; font-size: 13px; font-family: var(--sans);
+  color: var(--ink); background: var(--bg); resize: none;
+  min-height: 64px; outline: none; transition: border-color .14s, box-shadow .14s;
+}
+.comment-post-row textarea:focus {
+  border-color: var(--accent); box-shadow: 0 0 0 3px rgba(13,122,107,.12); background: var(--surface);
+}
+.comments-empty { text-align: center; padding: 20px 0; color: var(--ink3); font-size: 12.5px; }
+
+/* ─── PASSWORD CHANGE MODAL ─── */
+.pwd-modal-overlay {
+  display: none; position: fixed; inset: 0; z-index: 1100;
+  background: rgba(0,0,0,.45); align-items: center; justify-content: center;
+}
+.pwd-modal-overlay.open { display: flex; }
+.pwd-modal-box {
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: var(--r-lg); padding: 28px; max-width: 380px;
+  width: 94%; box-shadow: var(--shadow-lg);
+}
+.pwd-modal-box h3 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+.pwd-modal-sub { font-size: 12px; color: var(--ink3); margin-bottom: 18px; }
+.pwd-field { margin-bottom: 12px; }
+.pwd-field label { display: block; font-family: var(--mono); font-size: 9.5px; font-weight: 500; text-transform: uppercase; letter-spacing: .12em; color: var(--ink3); margin-bottom: 5px; }
+.pwd-field input { width: 100%; padding: 9px 12px; border-radius: var(--r); border: 1.5px solid var(--border); font-size: 13px; color: var(--ink); font-family: var(--sans); outline: none; background: var(--bg); transition: border-color .14s, box-shadow .14s; }
+.pwd-field input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(13,122,107,.12); background: var(--surface); }
+.pwd-error { background: var(--red-bg); color: var(--red); border: 1px solid #e9b0ac; border-radius: var(--r); padding: 8px 12px; font-size: 12px; font-weight: 600; margin-bottom: 12px; display: none; }
+.btn-change-pwd {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 10px; border-radius: var(--r);
+  border: 1.5px solid var(--border); background: var(--surface);
+  color: var(--ink3); font-size: 11.5px; font-weight: 600;
+  cursor: pointer; font-family: var(--sans); transition: all .14s;
+}
+.btn-change-pwd:hover { background: var(--surface2); color: var(--ink); border-color: var(--border2); }
 
 /* ─── LOGIN SCREEN ─── */
 .login-screen { display: none; position: fixed; inset: 0; z-index: 1000; background: var(--bg); align-items: center; justify-content: center; flex-direction: column; overflow: hidden; }
@@ -1465,8 +1542,8 @@ body {
   .login-card { margin: 8px; padding: 24px 14px 20px; }
 }
 </style>
-<script>var BAKED_DATA = {"inst":[{"id":"inst-0","value":"GD MODI COLLEGE OF ARTS"},{"id":"inst-1","value":"RR MEHTA COLLEGE OF SCIENCE AND CL PARIKH COLLEGE OF COMMERCE"},{"id":"inst-2","value":"BK MERCANTILE LAW COLLEGE"},{"id":"inst-1778652627552","value":"BK MEHTA IT CENTRE BCA COLLEGE"},{"id":"inst-1778652636856","value":"BL PARIKH COLLEGE OF BBA"},{"id":"inst-1778652653696","value":"MA PARIKH FINEARTS AND ARTS COLLEGE"},{"id":"inst-1778652680441","value":"BKDKM COLLEGE OF PROFESSIONAL STUDIES"},{"id":"inst-1778653022184","value":"BANASKANTHA DISTRICT KELAVANI MANDAL"},{"id":"inst-1778653035960","value":"RADIO PALANPUR 90.4 FM"}],"dept":[{"id":"dept-0","value":"Finance"},{"id":"dept-1","value":"HR"},{"id":"dept-2","value":"Operations"},{"id":"dept-3","value":"Sales"},{"id":"dept-4","value":"IT"},{"id":"dept-5","value":"Engineering"},{"id":"dept-6","value":"Administration"},{"id":"dept-7","value":"Management"},{"id":"dept-8","value":"Other"}],"tech":[{"id":"tech-1778911227135","value":"Mahesh Patel"},{"id":"tech-1778911255158","value":"Vishal Chauhan(GC)"},{"id":"tech-1778911519158","value":"Sudhir Chauhan"},{"id":"tech-1778913051967","value":"Ashish Panchal(ZC)"},{"id":"tech-1778913121062","value":"Ramesh Prajapati(GC)"},{"id":"tech-1778920675797","value":"Kaushik Sisodiya(RI)"}],"device":[{"id":"device-0","value":"Desktop"},{"id":"device-1","value":"Laptop"},{"id":"device-2","value":"Printer"},{"id":"device-3","value":"Scanner"},{"id":"device-4","value":"Projector"},{"id":"device-5","value":"UPS"},{"id":"device-6","value":"Keyboard"},{"id":"device-7","value":"Mouse"},{"id":"device-8","value":"Monitor"},{"id":"device-9","value":"Network Switch"},{"id":"device-1778911572838","value":"Biometric Attendance System"},{"id":"device-1778911620495","value":"CCTV Camera"},{"id":"device-1778911650030","value":"POE Switch"},{"id":"device-1778911735574","value":"CCTV NVR"},{"id":"device-1778911739175","value":"CCTV DVR"},{"id":"device-1778913277952","value":"Telephone"},{"id":"device-1778913283015","value":"Intecom"}],"model":[{"id":"model-0","value":"Dell OptiPlex 7020 Tower"},{"id":"model-1","value":"HP EliteDesk 800"},{"id":"model-2","value":"Lenovo ThinkCentre M720"},{"id":"model-3","value":"Acer Veriton S2690G"},{"id":"model-1778654500633","value":"HCL Infinity"},{"id":"model-1778740073845","value":"Hp Laserjet 1020 Plus"},{"id":"model-1778753523955","value":"Brother DCP-L2640DW"},{"id":"model-1778753548634","value":"Brother DCP -L2541DW"},{"id":"model-1778753698938","value":"HP Laserjet M1005"}],"serial":{"model-1778654500633":[{"id":"ser-1778740118613","value":"B101AA366399"}],"model-1778740073845":[{"id":"ser-1778754531530","value":"1032000000"}]}};</script>
-<script>var BAKED_DATA = {"inst":[{"id":"inst-0","value":"GD MODI COLLEGE OF ARTS"},{"id":"inst-1","value":"RR MEHTA COLLEGE OF SCIENCE AND CL PARIKH COLLEGE OF COMMERCE"},{"id":"inst-2","value":"BK MEHTA IT CENTRE BCA COLLEGE"}],"dept":[{"id":"dept-0","value":"Finance"},{"id":"dept-1","value":"HR"},{"id":"dept-2","value":"Operations"},{"id":"dept-3","value":"Sales"},{"id":"dept-4","value":"IT"},{"id":"dept-5","value":"Engineering"},{"id":"dept-6","value":"Administration"},{"id":"dept-7","value":"Management"},{"id":"dept-8","value":"Other"}],"tech":[{"id":"tech-0","value":"Amit Patel"},{"id":"tech-1","value":"Sneha Mehta"},{"id":"tech-2","value":"Rahul Verma"},{"id":"tech-3","value":"Priya Nair"},{"id":"tech-4","value":"Deepak Singh"}],"device":[{"id":"device-0","value":"Desktop"},{"id":"device-1","value":"Laptop"},{"id":"device-2","value":"Printer"},{"id":"device-3","value":"Scanner"},{"id":"device-4","value":"Projector"},{"id":"device-5","value":"UPS"},{"id":"device-6","value":"Keyboard"},{"id":"device-7","value":"Mouse"},{"id":"device-8","value":"Monitor"},{"id":"device-9","value":"Network Switch"}],"model":[{"id":"model-0","value":"Dell OptiPlex 7090"},{"id":"model-1","value":"HP EliteDesk 800"},{"id":"model-2","value":"Lenovo ThinkCentre M720"},{"id":"model-3","value":"Acer Veriton S2690G"},{"id":"model-1778752502674","value":"HCL Infinity"}],"serial":{"model-1778752502674":[{"id":"ser-1778752518994","value":"B101AA366399"}],"model-0":[{"id":"ser-1778752555762","value":"U2101AA201"}]}};</script>
+
+<script>var BAKED_DATA = {"inst":[{"id":"inst-0","value":"GD MODI COLLEGE OF ARTS"},{"id":"inst-1","value":"RR MEHTA COLLEGE OF SCIENCE AND CL PARIKH COLLEGE OF COMMERCE"},{"id":"inst-2","value":"BK MERCANTILE LAW COLLEGE"},{"id":"inst-1778652627552","value":"BK MEHTA IT CENTRE BCA COLLEGE"},{"id":"inst-1778652636856","value":"BL PARIKH COLLEGE OF BBA"},{"value":"MA PARIKH FINEARTS AND ARTS COLLEGE","id":"inst-1778652653696"},{"value":"BKDKM COLLEGE OF PROFESSIONAL STUDIES","id":"inst-1778652680441"},{"value":"BANASKANTHA DISTRICT KELAVANI MANDAL","id":"inst-1778653022184"},{"value":"RADIO PALANPUR 90.4 FM","id":"inst-1778653035960"}],"dept":[{"value":"Other","id":"dept-8"},{"id":"dept-1779101457672","value":"Chemistry"},{"id":"dept-1779101638008","value":"Physics"},{"value":"Biology","id":"dept-1779101646752"},{"id":"dept-1779101674089","value":"Botany"},{"id":"dept-1779118224390","value":"Admin"},{"id":"dept-1779118232000","value":"Staff Room"},{"value":"Computer Lab-1","id":"dept-1779118247917"},{"id":"dept-1779118342490","value":"Computer Lab-2"},{"id":"dept-1779118359672","value":"Computer Lab-3"},{"value":"Computer Lab-4","id":"dept-1779118370974"},{"id":"dept-1779118423096","value":"Library"},{"value":"NCC","id":"dept-1779118445648"},{"id":"dept-1779118452807","value":"NAAC"},{"value":"Principal","id":"dept-1779118459996"},{"value":"Room","id":"dept-1779118481995"},{"value":"IT","id":"dept-1779181748875"}],"tech":[{"value":"Mahesh Patel","id":"tech-1778911227135"},{"value":"Vishal Chauhan(GC)","id":"tech-1778911255158"},{"value":"Sudhir Chauhan","id":"tech-1778911519158"},{"value":"Ashish Panchal(ZC)","id":"tech-1778913051967"},{"value":"Ramesh Prajapati(GC)","id":"tech-1778913121062"},{"value":"Kaushik Sisodiya(RI)","id":"tech-1778920675797"},{"value":"Sanjay Panchal(ZT)","id":"tech-1779101547841"},{"id":"tech-1779104571697","value":"Dhaval Mehta"},{"value":"Thakor(GC)","id":"tech-1779118111328"},{"value":"Hiren (RI)","id":"tech-1779172007812"}],"device":[{"id":"device-0","value":"Desktop"},{"id":"device-1","value":"Laptop"},{"value":"Printer","id":"device-2"},{"id":"device-3","value":"Scanner"},{"value":"Projector","id":"device-4"},{"id":"device-5","value":"UPS"},{"value":"Keyboard","id":"device-6"},{"id":"device-7","value":"Mouse"},{"id":"device-8","value":"Monitor"},{"id":"device-9","value":"Network Switch"},{"value":"Biometric Attendance System","id":"device-1778911572838"},{"id":"device-1778911620495","value":"CCTV Camera"},{"value":"POE Switch","id":"device-1778911650030"},{"id":"device-1778911735574","value":"CCTV NVR"},{"id":"device-1778911739175","value":"CCTV DVR"},{"id":"device-1778913277952","value":"Telephone"},{"value":"Intecom","id":"device-1778913283015"}],"model":[{"id":"model-0","value":"Dell OptiPlex 7020 Tower"},{"value":"HP EliteDesk 800","id":"model-1"},{"value":"Lenovo ThinkCentre M720","id":"model-2"},{"id":"model-3","value":"Acer Veriton S2690G"},{"id":"model-1778654500633","value":"HCL Infinity"},{"id":"model-1778740073845","value":"Hp Laserjet 1020 Plus"},{"value":"Brother DCP-L2640DW","id":"model-1778753523955"},{"value":"Brother DCP -L2541DW","id":"model-1778753548634"},{"value":"HP Laserjet M1005","id":"model-1778753698938"}],"serial":{"model-1778654500633":[{"id":"ser-1778740118613","value":"B101AA366399"},{"id":"ser-1779102408530","value":"B101AA409733"}],"model-1778740073845":[{"value":"1032000000","id":"ser-1778754531530"}]}};</script>
 <!-- BAKED_DATA_INJECTION_POINT -->
 </head>
 <body>
@@ -1496,6 +1573,9 @@ body {
     <div class="login-field">
       <label>Password</label>
       <input type="password" id="login-password" placeholder="Enter your password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <div class="forgot-link">
+      <button onclick="openForgotModal()">Forgot password?</button>
     </div>
     <button class="login-btn" onclick="doLogin()">Sign In</button>
 
@@ -1533,16 +1613,16 @@ body {
       <button class="nav-btn " onclick="goView('list')" id="nav-list">
         <svg fill="none" viewBox="0 0 16 16"><path d="M2 4h12M2 8h12M2 12h7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg>
         All Tickets
-        <span class="nav-badge" id="nav-count">12</span>
+        <span class="nav-badge" id="nav-count">19</span>
       </button>
 
       <div class="nav-section-label admin-only" id="nav-admin-label">Admin</div>
       <button class="nav-btn admin-only" onclick="goView('users')" id="nav-users">
         <svg fill="none" viewBox="0 0 16 16"><circle cx="6" cy="5" r="2.5" stroke="currentColor" stroke-width="1.5"></circle><path d="M1 14c0-2.5 2.2-4 5-4s5 1.5 5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path d="M11 2a3 3 0 010 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path d="M14 14c0-2-1.3-3.5-3-3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg>
         Users
-        <span class="nav-badge" id="nav-users-count">6</span>
+        <span class="nav-badge" id="nav-users-count">9</span>
       </button>
-      <button class="nav-btn admin-only active" onclick="goView('master')" id="nav-master">
+      <button class="nav-btn admin-only" onclick="goView('master')" id="nav-master">
         <svg fill="none" viewBox="0 0 16 16"><rect x="2" y="2" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.5"></rect><rect x="9" y="2" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.5"></rect><rect x="2" y="9" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.5"></rect><rect x="9" y="9" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.5"></rect></svg>
         Master Data
       </button>
@@ -1556,15 +1636,19 @@ body {
         <svg fill="none" viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12" rx="1.5" stroke="currentColor" stroke-width="1.5"></rect><path d="M5 6h6M5 9h6M5 12h3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"></path><path d="M9 2v4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"></path></svg>
         Reports
       </button>
+      <button class="nav-btn admin-only active" onclick="goView('settings')" id="nav-settings">
+        <svg fill="none" viewBox="0 0 16 16" width="16" height="16"><circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.4"></circle><path d="M8 1.5v1.3M8 13.2v1.3M1.5 8h1.3M13.2 8h1.3M3.4 3.4l.9.9M11.7 11.7l.9.9M3.4 12.6l.9-.9M11.7 4.3l.9-.9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"></path></svg>
+        Settings
+      </button>
     </nav>
 
     <div class="sidebar-stats">
-      <div class="ss-card"><div class="ss-val" id="ss-open">2</div><div class="ss-lbl">Open</div></div>
-      <div class="ss-card"><div class="ss-val" id="ss-resolved">10</div><div class="ss-lbl">Closed</div></div>
+      <div class="ss-card"><div class="ss-val" id="ss-open">8</div><div class="ss-lbl" id="ss-open-lbl">Open</div></div>
+      <div class="ss-card"><div class="ss-val" id="ss-resolved">11</div><div class="ss-lbl" id="ss-resolved-lbl">Closed</div></div>
     </div>
 
-    <div class="clock-bar" id="clock-bar">05:06:24 pm
-Mon, 18 May, 2026</div>
+    <div class="clock-bar" id="clock-bar">02:01:37 PM
+Mon, 25 May, 2026</div>
   </aside>
 
   <!-- ══════════════════════════════ MAIN ══════════════════════════════ -->
@@ -1575,9 +1659,9 @@ Mon, 18 May, 2026</div>
       <button class="btn-hamburger" id="btn-hamburger" onclick="toggleMobileSidebar()" aria-label="Open menu">
         <svg fill="none" viewBox="0 0 16 16"><path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg>
       </button>
-      <span class="topbar-title" id="topbar-title">Master Data</span>
-      <span class="topbar-tid" id="topbar-tid">HW-1456</span>
-      <button class="btn btn-ghost btn-sm" id="btn-print" onclick="window.print()" style="display:none">
+      <span class="topbar-title" id="topbar-title">Settings</span>
+      <span class="topbar-tid" id="topbar-tid">HW-3795</span>
+      <button class="btn btn-ghost btn-sm" id="btn-print" onclick="window.print()" style="display: none;">
         <svg fill="none" viewBox="0 0 14 14"><rect x="2" y="4" width="10" height="7" rx="1" stroke="currentColor" stroke-width="1.3"></rect><path d="M4 4V2h6v2M4 9h6M4 11h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"></path></svg>
         Print
       </button>
@@ -1595,22 +1679,10 @@ Mon, 18 May, 2026</div>
         <span id="user-display-name">Administrator</span>
         <span class="user-role-pill urp-admin" id="user-role-pill">ADMIN</span>
       </div>
-      <button class="btn-firebase-settings admin-only connected" id="btn-firebase-settings" onclick="openFirebaseModal()" title="Firebase database settings">
-        <svg fill="none" viewBox="0 0 14 14"><path d="M2 11L5 2l2.5 4.5L9 4l3 7H2z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"></path></svg>
-        Database
-      </button>
       <span class="db-status-pill cloud" id="db-status-pill" title="Data storage mode">
         <span class="db-dot"></span>
-        <span id="db-status-label">Cloud</span>
+        <span id="db-status-label">Firebase sync active</span>
       </span>
-      <button class="btn-firebase-settings admin-only" onclick="bakeAndDownload()" title="Embed current master data into HTML for Netlify deployment" style="background:#f0fdf4;border-color:#86efac;color:#166534;">
-        <svg fill="none" viewBox="0 0 14 14" width="13" height="13"><path d="M7 9V2M4 6l3 3 3-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"></path><path d="M2 11h10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"></path></svg>
-        Bake &amp; Deploy
-      </button>
-      <button class="btn-email-settings admin-only configured" id="btn-email-settings" onclick="openEmailModal()" title="Email notification settings">
-        <svg fill="none" viewBox="0 0 14 14"><rect x="1" y="3" width="12" height="9" rx="1.5" stroke="currentColor" stroke-width="1.3"></rect><path d="M1 4l6 5 6-5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"></path></svg>
-        Email
-      </button>
       <button class="btn-logout" onclick="doLogout()" title="Sign out">
         <svg fill="none" viewBox="0 0 14 14" width="13" height="13"><path d="M5 2H2.5A.5.5 0 002 2.5v9a.5.5 0 00.5.5H5M9 10l3-3-3-3M12 7H5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"></path></svg>
         Logout
@@ -1631,7 +1703,7 @@ Mon, 18 May, 2026</div>
               <div style="display:flex;align-items:center;gap:7px;flex:1;">
                 <svg fill="none" viewBox="0 0 14 14" width="13" height="13" style="color:var(--accent);flex-shrink:0"><rect x="1.5" y="2.5" width="11" height="9" rx="1.2" stroke="currentColor" stroke-width="1.3"></rect><path d="M4 6h6M4 8.5h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"></path></svg>
                 <span style="font-family:var(--mono);font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--ink3);">Ticket ID</span>
-                <span id="form-tid-display" style="font-family:var(--mono);font-size:13px;font-weight:600;color:var(--accent);letter-spacing:.04em;">HW-1456</span>
+                <span id="form-tid-display" style="font-family:var(--mono);font-size:13px;font-weight:600;color:var(--accent);letter-spacing:.04em;">HW-3795</span>
               </div>
               <div style="display:flex;align-items:center;gap:7px;">
                 <svg fill="none" viewBox="0 0 14 14" width="13" height="13" style="color:var(--ink3);flex-shrink:0"><rect x="1.5" y="2.5" width="11" height="10" rx="1.2" stroke="currentColor" stroke-width="1.3"></rect><path d="M4.5 1.5v2M9.5 1.5v2M1.5 6h11" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"></path></svg>
@@ -1680,7 +1752,7 @@ Mon, 18 May, 2026</div>
                 </div>
                 <div class="fg2">
                   <div class="field"><label class="field-label">Department</label>
-                    <select id="f-dept"><option value="">Select department…</option><option value="dept-0">Finance</option><option value="dept-1">HR</option><option value="dept-2">Operations</option><option value="dept-3">Sales</option><option value="dept-4">IT</option><option value="dept-5">Engineering</option><option value="dept-6">Administration</option><option value="dept-7">Management</option><option value="dept-8">Other</option></select>
+                    <select id="f-dept"><option value="">Select department…</option><option value="dept-8">Other</option><option value="dept-1779101457672">Chemistry</option><option value="dept-1779101638008">Physics</option><option value="dept-1779101646752">Biology</option><option value="dept-1779101674089">Botany</option><option value="dept-1779118224390">Admin</option><option value="dept-1779118232000">Staff Room</option><option value="dept-1779118247917">Computer Lab-1</option><option value="dept-1779118342490">Computer Lab-2</option><option value="dept-1779118359672">Computer Lab-3</option><option value="dept-1779118370974">Computer Lab-4</option><option value="dept-1779118423096">Library</option><option value="dept-1779118445648">NCC</option><option value="dept-1779118452807">NAAC</option><option value="dept-1779118459996">Principal</option><option value="dept-1779118481995">Room</option><option value="dept-1779181748875">IT</option></select>
                   </div>
                 </div>
               </div>
@@ -1778,9 +1850,9 @@ Mon, 18 May, 2026</div>
               </div>
               <div class="card-body">
                 <div class="sla-wrap">
-                  <div class="sla-cell"><div class="sla-val" id="sla-e">0h 0m</div><div class="sla-lbl">Elapsed</div></div>
+                  <div class="sla-cell"><div class="sla-val" id="sla-e">0h 39m</div><div class="sla-lbl">Elapsed</div></div>
                   <div class="sla-cell">
-                    <div class="sla-val" id="sla-r">3h 59m</div>
+                    <div class="sla-val" id="sla-r">3h 20m</div>
                     <div class="sla-lbl">Remaining</div>
                     <span class="sla-pill sp-ok" id="sla-pill">Within SLA</span>
                   </div>
@@ -1836,7 +1908,7 @@ Mon, 18 May, 2026</div>
               </div>
               <div class="card-body">
                 <div class="field"><label class="field-label">Assigned Technician</label>
-                  <select id="f-tech" onchange="onTechChange()"><option value="">Unassigned</option><option>Mahesh Patel</option><option>Vishal Chauhan(GC)</option><option>Sudhir Chauhan</option><option>Ashish Panchal(ZC)</option><option>Ramesh Prajapati(GC)</option><option>Kaushik Sisodiya(RI)</option></select>
+                  <select id="f-tech" onchange="onTechChange()"><option value="">Unassigned</option><option>Mahesh Patel</option><option>Vishal Chauhan(GC)</option><option>Sudhir Chauhan</option><option>Ashish Panchal(ZC)</option><option>Ramesh Prajapati(GC)</option><option>Kaushik Sisodiya(RI)</option><option>Sanjay Panchal(ZT)</option><option>Dhaval Mehta</option><option>Thakor(GC)</option><option>Hiren (RI)</option></select>
                 </div>
                 <div class="field"><label class="field-label">Est. Resolution Date</label><input type="date" id="f-eta"></div>
                 <div class="field"><label class="field-label">Resolution Notes</label>
@@ -1859,7 +1931,7 @@ Mon, 18 May, 2026</div>
                     <div class="esc-content">
                       <div class="esc-name">L1 — First Response</div>
                       <div class="esc-desc">Ticket created &amp; acknowledged</div>
-                      <div class="esc-ts" id="e1-ts">05:06:22 pm</div>
+                      <div class="esc-ts" id="e1-ts">01:22:28 PM</div>
                     </div>
                   </div>
                   <div class="esc-item">
@@ -1908,7 +1980,7 @@ Mon, 18 May, 2026</div>
               <div class="card-body" style="padding:10px 18px;">
                 <div class="log-wrap">
                   <div class="log-item" style="border-bottom-width: medium; border-bottom-style: none; border-bottom-color: currentcolor; padding: 0px; color: var(--ink3); font-size: 12px; text-align: center; display: none;" id="log-empty">No activity yet.</div>
-                  <div id="log-list"><div class="log-item"><div class="log-dot ld-sys"></div><div class="log-who">System</div>&nbsp;<div class="log-act">Ticket session started</div><div class="log-ts">05:06:22 pm</div></div></div>
+                  <div id="log-list"><div class="log-item"><div class="log-dot ld-sys"></div><div class="log-who">System</div>&nbsp;<div class="log-act">Ticket session started</div><div class="log-ts">01:22:28 PM</div></div></div>
                 </div>
               </div>
             </div>
@@ -1932,7 +2004,7 @@ Mon, 18 May, 2026</div>
                 <svg fill="none" viewBox="0 0 12 12" width="12" height="12"><path d="M9 3L3 9M3 3l6 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"></path></svg>
               </button>
             </div>
-            <div class="asp-result-count" id="asp-result-count">— tickets</div>
+            <div class="asp-result-count" id="asp-result-count">19 tickets</div>
           </div>
 
           <div class="asp-filters">
@@ -1955,11 +2027,11 @@ Mon, 18 May, 2026</div>
             </div>
             <div class="asp-filter-group">
               <label class="asp-filter-label">Department</label>
-              <select class="flt-sel" id="flt-dept" onchange="renderList()"><option value="">All Depts</option><option value="Finance">Finance</option><option value="HR">HR</option><option value="Operations">Operations</option><option value="Sales">Sales</option><option value="IT">IT</option><option value="Engineering">Engineering</option><option value="Administration">Administration</option><option value="Management">Management</option><option value="Other">Other</option></select>
+              <select class="flt-sel" id="flt-dept" onchange="renderList()"><option value="">All Depts</option><option value="Other">Other</option><option value="Chemistry">Chemistry</option><option value="Physics">Physics</option><option value="Biology">Biology</option><option value="Botany">Botany</option><option value="Admin">Admin</option><option value="Staff Room">Staff Room</option><option value="Computer Lab-1">Computer Lab-1</option><option value="Computer Lab-2">Computer Lab-2</option><option value="Computer Lab-3">Computer Lab-3</option><option value="Computer Lab-4">Computer Lab-4</option><option value="Library">Library</option><option value="NCC">NCC</option><option value="NAAC">NAAC</option><option value="Principal">Principal</option><option value="Room">Room</option><option value="IT">IT</option></select>
             </div>
             <div class="asp-filter-group">
               <label class="asp-filter-label">Technician</label>
-              <select class="flt-sel" id="flt-tech" onchange="renderList()"><option value="">All Technicians</option><option value="Mahesh Patel">Mahesh Patel</option><option value="Vishal Chauhan(GC)">Vishal Chauhan(GC)</option><option value="Sudhir Chauhan">Sudhir Chauhan</option><option value="Ashish Panchal(ZC)">Ashish Panchal(ZC)</option><option value="Ramesh Prajapati(GC)">Ramesh Prajapati(GC)</option><option value="Kaushik Sisodiya(RI)">Kaushik Sisodiya(RI)</option></select>
+              <select class="flt-sel" id="flt-tech" onchange="renderList()"><option value="">All Technicians</option><option value="Mahesh Patel">Mahesh Patel</option><option value="Vishal Chauhan(GC)">Vishal Chauhan(GC)</option><option value="Sudhir Chauhan">Sudhir Chauhan</option><option value="Ashish Panchal(ZC)">Ashish Panchal(ZC)</option><option value="Ramesh Prajapati(GC)">Ramesh Prajapati(GC)</option><option value="Kaushik Sisodiya(RI)">Kaushik Sisodiya(RI)</option><option value="Sanjay Panchal(ZT)">Sanjay Panchal(ZT)</option><option value="Dhaval Mehta">Dhaval Mehta</option><option value="Thakor(GC)">Thakor(GC)</option><option value="Hiren (RI)">Hiren (RI)</option></select>
             </div>
             <div class="asp-filter-group">
               <label class="asp-filter-label">Institution</label>
@@ -1974,6 +2046,10 @@ Mon, 18 May, 2026</div>
                 <svg fill="none" viewBox="0 0 14 14" width="13" height="13"><rect x="2" y="5" width="10" height="7" rx="1" stroke="currentColor" stroke-width="1.3"></rect><path d="M4 5V3a1 1 0 011-1h4a1 1 0 011 1v2" stroke="currentColor" stroke-width="1.3"></path><path d="M4 9h6M4 11h4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"></path><circle cx="10.5" cy="7.5" r=".8" fill="currentColor"></circle></svg>
                 Print Results
               </button>
+              <button class="btn btn-sm" id="btn-export-csv" onclick="exportCSV()" style="background: var(--surface2); border: 1.5px solid var(--border);">
+                <svg fill="none" viewBox="0 0 14 14" width="13" height="13"><path d="M7 9V2M4 6l3 3 3-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"></path><path d="M2 11h10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"></path></svg>
+                Export CSV
+              </button>
               <button class="btn btn-sm btn-red" onclick="confirmClearAll()">
                 <svg fill="none" viewBox="0 0 14 14"><path d="M2 4h10M5 4V2h4v2M11 4l-.7 8H3.7L3 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"></path></svg>
                 Clear All
@@ -1985,19 +2061,19 @@ Mon, 18 May, 2026</div>
           <div class="asp-chips" id="asp-chips"></div>
         </div>
         <div id="list-wrap">
-          <div class="empty-state" id="list-empty">
+          <div class="empty-state" id="list-empty" style="display: none;">
             <svg fill="none" viewBox="0 0 40 40"><rect x="6" y="8" width="28" height="24" rx="3" stroke="currentColor" stroke-width="1.5"></rect><path d="M13 16h14M13 21h10M13 26h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg>
             <p>No tickets found. Submit one to get started.</p>
           </div>
           <div class="tkt-table-wrap">
-          <table class="tkt-table" id="tkt-table" style="display:none">
+          <table class="tkt-table" id="tkt-table" style="">
             <thead>
               <tr>
                 <th>ID</th><th>Caller</th><th>Device</th><th>Category</th>
                 <th>Priority</th><th>Status</th><th>Technician</th><th>Created</th><th>Action</th>
               </tr>
             </thead>
-            <tbody id="tkt-tbody"></tbody>
+            <tbody id="tkt-tbody"><tr onclick="viewTicket('HW-9300')"><td class="tkt-id-cell">HW-9300</td><td><div class="tkt-name">Mahesh Patel</div><div class="tkt-sub">dept-1779181748875</div></td><td>Desktop</td><td style="max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Not powering on</td><td><span class="pill pill-p4">P4</span></td><td><span class="pill pill-open">Open</span></td><td>Unassigned</td><td style="font-family:var(--mono);font-size:11px;">25 May</td><td></td></tr><tr onclick="viewTicket('HW-7530')"><td class="tkt-id-cell">HW-7530</td><td><div class="tkt-name">Kuldeep Mathur</div><div class="tkt-sub">dept-8</div></td><td>Desktop</td><td style="max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Not powering on</td><td><span class="pill pill-p4">P4</span></td><td><span class="pill pill-open">Open</span></td><td>Unassigned</td><td style="font-family:var(--mono);font-size:11px;">19 May</td><td></td></tr><tr onclick="viewTicket('HW-3942')"><td class="tkt-id-cell">HW-3942</td><td><div class="tkt-name">Mahesh Patel</div><div class="tkt-sub">dept-1779181748875</div></td><td>Desktop</td><td style="max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Not powering on</td><td><span class="pill pill-p4">P4</span></td><td><span class="pill pill-open">Open</span></td><td>Unassigned</td><td style="font-family:var(--mono);font-size:11px;">19 May</td><td></td></tr><tr onclick="viewTicket('HW-2830')"><td class="tkt-id-cell">HW-2830</td><td><div class="tkt-name">Kuldeep Mathur</div><div class="tkt-sub">Other</div></td><td>Desktop</td><td style="max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Not powering on</td><td><span class="pill pill-p4">P4</span></td><td><span class="pill pill-inprog">In Progress</span></td><td>Mahesh Patel</td><td style="font-family:var(--mono);font-size:11px;">19 May</td><td></td></tr><tr onclick="viewTicket('HW-5976')"><td class="tkt-id-cell">HW-5976</td><td><div class="tkt-name">Sudhir Chauhan</div><div class="tkt-sub">dept-4</div></td><td>Desktop</td><td style="max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Not powering on</td><td><span class="pill pill-p4">P4</span></td><td><span class="pill pill-open">Open</span></td><td>Unassigned</td><td style="font-family:var(--mono);font-size:11px;">19 May</td><td></td></tr><tr onclick="viewTicket('HW-4962')"><td class="tkt-id-cell">HW-4962</td><td><div class="tkt-name">Sudhir Chauhan</div><div class="tkt-sub">IT</div></td><td>Laptop</td><td style="max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Not powering on</td><td><span class="pill pill-p4">P4</span></td><td><span class="pill pill-resolved">Closed</span></td><td>Mahesh Patel</td><td style="font-family:var(--mono);font-size:11px;">19 May</td><td></td></tr><tr onclick="viewTicket('HW-9039')"><td class="tkt-id-cell">HW-9039</td><td><div class="tkt-name">Mahesh Patel</div><div class="tkt-sub">dept-4</div></td><td>Laptop</td><td style="max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Display / Screen</td><td><span class="pill pill-p3">P3</span></td><td><span class="pill pill-open">Open</span></td><td>Unassigned</td><td style="font-family:var(--mono);font-size:11px;">18 May</td><td></td></tr><tr onclick="viewTicket('HW-2458')"><td class="tkt-id-cell">HW-2458</td><td><div class="tkt-name">Milan Dave</div><div class="tkt-sub">dept-8</div></td><td>Mouse</td><td style="max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Other</td><td><span class="pill pill-p3">P3</span></td><td><span class="pill pill-open">Open</span></td><td>Unassigned</td><td style="font-family:var(--mono);font-size:11px;">18 May</td><td></td></tr><tr onclick="viewTicket('HW-7453')"><td class="tkt-id-cell">HW-7453</td><td><div class="tkt-name">Milan Dave</div><div class="tkt-sub">Chemistry</div></td><td>Desktop</td><td style="max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Not powering on</td><td><span class="pill pill-p3">P3</span></td><td><span class="pill pill-inprog">In Progress</span></td><td>Mahesh Patel</td><td style="font-family:var(--mono);font-size:11px;">18 May</td><td></td></tr><tr onclick="viewTicket('HW-9656')"><td class="tkt-id-cell">HW-9656</td><td><div class="tkt-name">Mahesh Patel</div><div class="tkt-sub">—</div></td><td>—</td><td style="max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Not specified</td><td><span class="pill pill-p3">P3</span></td><td><span class="pill pill-resolved">Closed</span></td><td>Unassigned</td><td style="font-family:var(--mono);font-size:11px;">16 May</td><td></td></tr><tr onclick="viewTicket('HW-2403')"><td class="tkt-id-cell">HW-2403</td><td><div class="tkt-name">Mahesh Patel</div><div class="tkt-sub">IT</div></td><td>Desktop PC</td><td style="max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Not powering on</td><td><span class="pill pill-p3">P3</span></td><td><span class="pill pill-resolved">Closed</span></td><td>Unassigned</td><td style="font-family:var(--mono);font-size:11px;">16 May</td><td></td></tr><tr onclick="viewTicket('HW-2110')"><td class="tkt-id-cell">HW-2110</td><td><div class="tkt-name">Mahesh Patel</div><div class="tkt-sub">IT</div></td><td>Desktop PC</td><td style="max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Display / Screen</td><td><span class="pill pill-p3">P3</span></td><td><span class="pill pill-resolved">Closed</span></td><td>Arjun Mehta</td><td style="font-family:var(--mono);font-size:11px;">14 May</td><td></td></tr><tr onclick="viewTicket('HW-4707')"><td class="tkt-id-cell">HW-4707</td><td><div class="tkt-name">Mahesh Patel</div><div class="tkt-sub">IT</div></td><td>Storage Device</td><td style="max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Physical damage</td><td><span class="pill pill-p3">P3</span></td><td><span class="pill pill-resolved">Closed</span></td><td>Unassigned</td><td style="font-family:var(--mono);font-size:11px;">12 May</td><td></td></tr><tr onclick="viewTicket('HW-6007')"><td class="tkt-id-cell">HW-6007</td><td><div class="tkt-name">Sudhir Chauhan</div><div class="tkt-sub">IT</div></td><td>Scanner</td><td style="max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Not powering on</td><td><span class="pill pill-p4">P4</span></td><td><span class="pill pill-resolved">Closed</span></td><td>Unassigned</td><td style="font-family:var(--mono);font-size:11px;">12 May</td><td></td></tr><tr onclick="viewTicket('HW-1050')"><td class="tkt-id-cell">HW-1050</td><td><div class="tkt-name">ramila salvi</div><div class="tkt-sub">Administration</div></td><td>Desktop PC</td><td style="max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Not powering on</td><td><span class="pill pill-p2">P2</span></td><td><span class="pill pill-resolved">Closed</span></td><td>Unassigned</td><td style="font-family:var(--mono);font-size:11px;">12 May</td><td></td></tr><tr onclick="viewTicket('HW-3036')"><td class="tkt-id-cell">HW-3036</td><td><div class="tkt-name">Sudhir Chauhan</div><div class="tkt-sub">Other</div></td><td>Server</td><td style="max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Physical damage</td><td><span class="pill pill-p2">P2</span></td><td><span class="pill pill-resolved">Closed</span></td><td>Unassigned</td><td style="font-family:var(--mono);font-size:11px;">12 May</td><td></td></tr><tr onclick="viewTicket('HW-5455')"><td class="tkt-id-cell">HW-5455</td><td><div class="tkt-name">Mahesh Patel</div><div class="tkt-sub">Sales</div></td><td>Desktop PC</td><td style="max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Keyboard / Input</td><td><span class="pill pill-p4">P4</span></td><td><span class="pill pill-resolved">Closed</span></td><td>Unassigned</td><td style="font-family:var(--mono);font-size:11px;">12 May</td><td></td></tr><tr onclick="viewTicket('HW-9408')"><td class="tkt-id-cell">HW-9408</td><td><div class="tkt-name">Mahesh Patel</div><div class="tkt-sub">Finance</div></td><td>Scanner</td><td style="max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Not powering on</td><td><span class="pill pill-p4">P4</span></td><td><span class="pill pill-resolved">Closed</span></td><td>Unassigned</td><td style="font-family:var(--mono);font-size:11px;">07 May</td><td></td></tr><tr onclick="viewTicket('HW-7050')"><td class="tkt-id-cell">HW-7050</td><td><div class="tkt-name">Mahesh Patel</div><div class="tkt-sub">IT</div></td><td>Desktop PC</td><td style="max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Not powering on</td><td><span class="pill pill-p4">P4</span></td><td><span class="pill pill-resolved">Closed</span></td><td>Priya Nair</td><td style="font-family:var(--mono);font-size:11px;">07 May</td><td></td></tr></tbody>
           </table>
           </div>
         </div>
@@ -2071,11 +2147,11 @@ Mon, 18 May, 2026</div>
             <div class="field"><label class="field-label">Email Address</label><input type="email" id="cf-email" placeholder="ravi@company.com"></div>
             <div class="field">
               <label class="field-label">Institution</label>
-              <select id="cf-institution"><option value="">Select institution…</option><option value="inst-0">GD MODI COLLEGE OF ARTS</option><option value="inst-1">RR MEHTA COLLEGE OF SCIENCE AND CL PARIKH COLLEGE OF COMMERCE</option><option value="inst-2">BK MERCANTILE LAW COLLEGE</option><option value="inst-1778652627552">BK MEHTA IT CENTRE BCA COLLEGE</option><option value="inst-1778652636856">BL PARIKH COLLEGE OF BBA</option><option value="inst-1778652653696">MA PARIKH FINEARTS AND ARTS COLLEGE</option><option value="inst-1778652680441">BKDKM COLLEGE OF PROFESSIONAL STUDIES</option><option value="inst-1778653022184">BANASKANTHA DISTRICT KELAVANI MANDAL</option><option value="inst-1778653035960">RADIO PALANPUR 90.4 FM</option></select>
+              <select id="cf-institution"><option value="">Select institution…</option><option value="GD MODI COLLEGE OF ARTS">GD MODI COLLEGE OF ARTS</option><option value="RR MEHTA COLLEGE OF SCIENCE AND CL PARIKH COLLEGE OF COMMERCE">RR MEHTA COLLEGE OF SCIENCE AND CL PARIKH COLLEGE OF COMMERCE</option><option value="BK MERCANTILE LAW COLLEGE">BK MERCANTILE LAW COLLEGE</option><option value="BK MEHTA IT CENTRE BCA COLLEGE">BK MEHTA IT CENTRE BCA COLLEGE</option><option value="BL PARIKH COLLEGE OF BBA">BL PARIKH COLLEGE OF BBA</option><option value="MA PARIKH FINEARTS AND ARTS COLLEGE">MA PARIKH FINEARTS AND ARTS COLLEGE</option><option value="BKDKM COLLEGE OF PROFESSIONAL STUDIES">BKDKM COLLEGE OF PROFESSIONAL STUDIES</option><option value="BANASKANTHA DISTRICT KELAVANI MANDAL">BANASKANTHA DISTRICT KELAVANI MANDAL</option><option value="RADIO PALANPUR 90.4 FM">RADIO PALANPUR 90.4 FM</option></select>
             </div>
             <div class="field">
               <label class="field-label">Department</label>
-              <select id="cf-dept"><option value="">Select department…</option><option value="dept-0">Finance</option><option value="dept-1">HR</option><option value="dept-2">Operations</option><option value="dept-3">Sales</option><option value="dept-4">IT</option><option value="dept-5">Engineering</option><option value="dept-6">Administration</option><option value="dept-7">Management</option><option value="dept-8">Other</option></select>
+              <select id="cf-dept"><option value="">Select department…</option><option value="Other">Other</option><option value="Chemistry">Chemistry</option><option value="Physics">Physics</option><option value="Biology">Biology</option><option value="Botany">Botany</option><option value="Admin">Admin</option><option value="Staff Room">Staff Room</option><option value="Computer Lab-1">Computer Lab-1</option><option value="Computer Lab-2">Computer Lab-2</option><option value="Computer Lab-3">Computer Lab-3</option><option value="Computer Lab-4">Computer Lab-4</option><option value="Library">Library</option><option value="NCC">NCC</option><option value="NAAC">NAAC</option><option value="Principal">Principal</option><option value="Room">Room</option><option value="IT">IT</option></select>
             </div>
             <div class="field"><label class="field-label">Notes / Remarks</label><textarea id="cf-notes" placeholder="Any additional notes…" style="min-height:56px;"></textarea></div>
 
@@ -2094,20 +2170,15 @@ Mon, 18 May, 2026</div>
 
           <!-- RIGHT: combined user list -->
           <div class="caller-list-panel">
-            <div class="caller-count-info" id="caller-count-info">0 users</div>
-            <div id="caller-list-body">
-              <div class="caller-empty-state">
-                <svg fill="none" viewBox="0 0 48 48" width="52" height="52"><circle cx="18" cy="16" r="8" stroke="currentColor" stroke-width="1.5"></circle><path d="M2 44c0-7 7-12 16-12s16 5 16 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path d="M34 20a6 6 0 010 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path d="M42 44c0-5-3-9-8-10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg>
-                <p>No users yet. Add your first user.</p>
-              </div>
-            </div>
+            <div class="caller-count-info" id="caller-count-info">9 of 9 users</div>
+            <div id="caller-list-body"><div class="caller-card" data-id="CAL-1779274302598" onclick="callerFormEdit('CAL-1779274302598')"><div class="caller-avatar">SD</div><div style="flex:1;min-width:0;"><div class="caller-info-name">Shashikant Dave</div><div class="caller-info-meta"><span>📞 99799 25155</span><span>✉ shashikant_dave@yahoo.com</span><span style="font-size:11px;color:var(--ink3);">RR MEHTA COLLEGE OF SCIENCE AN…</span></div><div style="margin-top:4px;"><span style="font-size:9.5px;font-family:var(--mono);background:var(--accent-bg);color:var(--accent);border-radius:10px;padding:2px 7px;font-weight:600;">🔑 shashikant.dave</span></div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;"><span class="caller-info-dept">Admin</span><div class="caller-actions" onclick="event.stopPropagation()"><button class="cact-btn" title="Edit" onclick="callerFormEdit('CAL-1779274302598')"><svg fill="none" viewBox="0 0 14 14"><path d="M9.5 2.5l2 2L4 12H2v-2L9.5 2.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"></path></svg></button><button class="cact-btn del" title="Delete" onclick="deleteCaller('CAL-1779274302598')"><svg fill="none" viewBox="0 0 14 14"><path d="M2 4h10M5 4V2h4v2M11 4l-.7 8H3.7L3 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"></path></svg></button></div></div></div><div class="caller-card" data-id="CAL-1779191313563" onclick="callerFormEdit('CAL-1779191313563')"><div class="caller-avatar">MP</div><div style="flex:1;min-width:0;"><div class="caller-info-name">Mahesh Patel</div><div class="caller-info-meta"><span>📞 9904148624</span><span>✉ patelmaheshk@rediffmail.com</span><span style="font-size:11px;color:var(--ink3);">BK MEHTA IT CENTRE BCA COLLEGE</span></div><div style="margin-top:4px;"><span style="font-size:9.5px;font-family:var(--mono);background:var(--accent-bg);color:var(--accent);border-radius:10px;padding:2px 7px;font-weight:600;">🔑 mahesh</span></div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;"><span class="caller-info-dept">IT</span><div class="caller-actions" onclick="event.stopPropagation()"><button class="cact-btn" title="Edit" onclick="callerFormEdit('CAL-1779191313563')"><svg fill="none" viewBox="0 0 14 14"><path d="M9.5 2.5l2 2L4 12H2v-2L9.5 2.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"></path></svg></button><button class="cact-btn del" title="Delete" onclick="deleteCaller('CAL-1779191313563')"><svg fill="none" viewBox="0 0 14 14"><path d="M2 4h10M5 4V2h4v2M11 4l-.7 8H3.7L3 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"></path></svg></button></div></div></div><div class="caller-card" data-id="CAL-1779174991839" onclick="callerFormEdit('CAL-1779174991839')"><div class="caller-avatar">KM</div><div style="flex:1;min-width:0;"><div class="caller-info-name">Kuldeep Mathur</div><div class="caller-info-meta"><span>📞 9825197297</span><span>✉ matkul2873@gmail.com</span><span style="font-size:11px;color:var(--ink3);">RR MEHTA COLLEGE OF SCIENCE AN…</span></div><div style="margin-top:4px;"><span style="font-size:9.5px;font-family:var(--mono);background:var(--accent-bg);color:var(--accent);border-radius:10px;padding:2px 7px;font-weight:600;">🔑 kuldeep.mathur</span></div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;"><span class="caller-info-dept">Other</span><div class="caller-actions" onclick="event.stopPropagation()"><button class="cact-btn" title="Edit" onclick="callerFormEdit('CAL-1779174991839')"><svg fill="none" viewBox="0 0 14 14"><path d="M9.5 2.5l2 2L4 12H2v-2L9.5 2.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"></path></svg></button><button class="cact-btn del" title="Delete" onclick="deleteCaller('CAL-1779174991839')"><svg fill="none" viewBox="0 0 14 14"><path d="M2 4h10M5 4V2h4v2M11 4l-.7 8H3.7L3 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"></path></svg></button></div></div></div><div class="caller-card" data-id="CAL-1779101948113" onclick="callerFormEdit('CAL-1779101948113')"><div class="caller-avatar">RS</div><div style="flex:1;min-width:0;"><div class="caller-info-name">Ramila Salvi</div><div class="caller-info-meta"><span>📞 9428194428</span><span>✉ rksalvi_1972@yahoo.in</span><span style="font-size:11px;color:var(--ink3);">BK MEHTA IT CENTRE BCA COLLEGE</span></div><div style="margin-top:4px;"><span style="font-size:9.5px;font-family:var(--mono);background:var(--accent-bg);color:var(--accent);border-radius:10px;padding:2px 7px;font-weight:600;">🔑 ramila</span></div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;"><span class="caller-info-dept">Admin</span><div class="caller-actions" onclick="event.stopPropagation()"><button class="cact-btn" title="Edit" onclick="callerFormEdit('CAL-1779101948113')"><svg fill="none" viewBox="0 0 14 14"><path d="M9.5 2.5l2 2L4 12H2v-2L9.5 2.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"></path></svg></button><button class="cact-btn del" title="Delete" onclick="deleteCaller('CAL-1779101948113')"><svg fill="none" viewBox="0 0 14 14"><path d="M2 4h10M5 4V2h4v2M11 4l-.7 8H3.7L3 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"></path></svg></button></div></div></div><div class="caller-card" data-id="CAL-1779099370105" onclick="callerFormEdit('CAL-1779099370105')"><div class="caller-avatar">MD</div><div style="flex:1;min-width:0;"><div class="caller-info-name">Milan Dave</div><div class="caller-info-meta"><span>📞 94084 67384</span><span>✉ milanrdave@gmail.com</span><span style="font-size:11px;color:var(--ink3);">RR MEHTA COLLEGE OF SCIENCE AN…</span></div><div style="margin-top:4px;"><span style="font-size:9.5px;font-family:var(--mono);background:var(--accent-bg);color:var(--accent);border-radius:10px;padding:2px 7px;font-weight:600;">🔑 milan.dave</span></div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;"><span class="caller-info-dept">Other</span><div class="caller-actions" onclick="event.stopPropagation()"><button class="cact-btn" title="Edit" onclick="callerFormEdit('CAL-1779099370105')"><svg fill="none" viewBox="0 0 14 14"><path d="M9.5 2.5l2 2L4 12H2v-2L9.5 2.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"></path></svg></button><button class="cact-btn del" title="Delete" onclick="deleteCaller('CAL-1779099370105')"><svg fill="none" viewBox="0 0 14 14"><path d="M2 4h10M5 4V2h4v2M11 4l-.7 8H3.7L3 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"></path></svg></button></div></div></div><div class="caller-card" data-id="CAL-1778654152764-nnq3" onclick="callerFormEdit('CAL-1778654152764-nnq3')"><div class="caller-avatar">SC</div><div style="flex:1;min-width:0;"><div class="caller-info-name">Sudhir Chauhan</div><div class="caller-info-meta"><span>📞 8000545080</span><span>✉ chauhansudhirs@yahoo.co.in</span><span style="font-size:11px;color:var(--ink3);">BK MEHTA IT CENTRE BCA COLLEGE</span></div><div style="margin-top:4px;"><span style="font-size:9.5px;font-family:var(--mono);background:var(--accent-bg);color:var(--accent);border-radius:10px;padding:2px 7px;font-weight:600;">🔑 sudhir.chauhan</span></div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;"><span class="caller-info-dept">IT</span><div class="caller-actions" onclick="event.stopPropagation()"><button class="cact-btn" title="Edit" onclick="callerFormEdit('CAL-1778654152764-nnq3')"><svg fill="none" viewBox="0 0 14 14"><path d="M9.5 2.5l2 2L4 12H2v-2L9.5 2.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"></path></svg></button><button class="cact-btn del" title="Delete" onclick="deleteCaller('CAL-1778654152764-nnq3')"><svg fill="none" viewBox="0 0 14 14"><path d="M2 4h10M5 4V2h4v2M11 4l-.7 8H3.7L3 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"></path></svg></button></div></div></div><div class="caller-card" data-id="CAL-1778654152763-yqdr" onclick="callerFormEdit('CAL-1778654152763-yqdr')"><div class="caller-avatar">MP</div><div style="flex:1;min-width:0;"><div class="caller-info-name">Mahesh Patel</div><div class="caller-info-meta"><span>📞 9904148624</span><span>✉ patelmaheshk@rediffmail.com</span><span style="font-size:11px;color:var(--ink3);">BK MEHTA IT CENTRE BCA COLLEGE</span></div><div style="margin-top:4px;"><span style="font-size:9.5px;font-family:var(--mono);background:var(--accent-bg);color:var(--accent);border-radius:10px;padding:2px 7px;font-weight:600;">🔑 mahesh.patel</span></div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;"><span class="caller-info-dept">IT</span><div class="caller-actions" onclick="event.stopPropagation()"><button class="cact-btn" title="Edit" onclick="callerFormEdit('CAL-1778654152763-yqdr')"><svg fill="none" viewBox="0 0 14 14"><path d="M9.5 2.5l2 2L4 12H2v-2L9.5 2.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"></path></svg></button><button class="cact-btn del" title="Delete" onclick="deleteCaller('CAL-1778654152763-yqdr')"><svg fill="none" viewBox="0 0 14 14"><path d="M2 4h10M5 4V2h4v2M11 4l-.7 8H3.7L3 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"></path></svg></button></div></div></div><div class="caller-card" data-id="CAL-1778586911213-z6bn" onclick="callerFormEdit('CAL-1778586911213-z6bn')"><div class="caller-avatar">PN</div><div style="flex:1;min-width:0;"><div class="caller-info-name">Priya Nair</div><div class="caller-info-meta"><span>📞 +91 91234 56789</span><span>✉ priya@company.com</span><span style="font-size:11px;color:var(--ink3);">GD MODI COLLEGE OF ARTS</span></div><div style="margin-top:4px;"><span style="font-size:9.5px;font-family:var(--mono);background:var(--accent-bg);color:var(--accent);border-radius:10px;padding:2px 7px;font-weight:600;">🔑 priya.nair</span></div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;"><span class="caller-info-dept">HR</span><div class="caller-actions" onclick="event.stopPropagation()"><button class="cact-btn" title="Edit" onclick="callerFormEdit('CAL-1778586911213-z6bn')"><svg fill="none" viewBox="0 0 14 14"><path d="M9.5 2.5l2 2L4 12H2v-2L9.5 2.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"></path></svg></button><button class="cact-btn del" title="Delete" onclick="deleteCaller('CAL-1778586911213-z6bn')"><svg fill="none" viewBox="0 0 14 14"><path d="M2 4h10M5 4V2h4v2M11 4l-.7 8H3.7L3 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"></path></svg></button></div></div></div><div class="caller-card" data-id="CAL-1778586911213-pdav" onclick="callerFormEdit('CAL-1778586911213-pdav')"><div class="caller-avatar">RS</div><div style="flex:1;min-width:0;"><div class="caller-info-name">Ravi Sharma</div><div class="caller-info-meta"><span>📞 +91 98765 43210</span><span>✉ ravi@company.com</span><span style="font-size:11px;color:var(--ink3);">GD MODI COLLEGE OF ARTS</span></div><div style="margin-top:4px;"><span style="font-size:9.5px;font-family:var(--mono);background:var(--accent-bg);color:var(--accent);border-radius:10px;padding:2px 7px;font-weight:600;">🔑 ravi.sharma</span></div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;"><span class="caller-info-dept">IT</span><div class="caller-actions" onclick="event.stopPropagation()"><button class="cact-btn" title="Edit" onclick="callerFormEdit('CAL-1778586911213-pdav')"><svg fill="none" viewBox="0 0 14 14"><path d="M9.5 2.5l2 2L4 12H2v-2L9.5 2.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"></path></svg></button><button class="cact-btn del" title="Delete" onclick="deleteCaller('CAL-1778586911213-pdav')"><svg fill="none" viewBox="0 0 14 14"><path d="M2 4h10M5 4V2h4v2M11 4l-.7 8H3.7L3 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"></path></svg></button></div></div></div></div>
           </div>
 
         </div>
       </div><!-- /view-users -->
 
       <!-- ── MASTER DATA ── -->
-      <div class="view active" id="view-master">
+      <div class="view" id="view-master">
 
         <!-- Tab bar -->
         <div class="master-tab-bar">
@@ -2131,8 +2202,9 @@ Mon, 18 May, 2026</div>
               <span>Institutions</span>
               <span class="master-count" id="inst-count">9</span>
             </div>
-            <div class="master-add-row">
-              <input type="text" id="inst-input" class="master-input" placeholder="Enter institution name…" onkeydown="if(event.key==='Enter')addMasterItem('inst')">
+            <div class="master-add-row" style="flex-wrap:wrap;gap:6px;">
+              <input type="text" id="inst-input" class="master-input" placeholder="Institution name…" onkeydown="if(event.key==='Enter')addMasterItem('inst')" style="flex:2;min-width:160px;">
+              <input type="email" id="inst-email-input" class="master-input" placeholder="Institution email (optional)…" onkeydown="if(event.key==='Enter')addMasterItem('inst')" style="flex:2;min-width:160px;">
               <button class="master-add-btn" onclick="addMasterItem('inst')">
                 <svg fill="none" viewBox="0 0 14 14" width="14" height="14"><path d="M7 2v10M2 7h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg>
                 Add
@@ -2223,7 +2295,7 @@ Mon, 18 May, 2026</div>
             <div class="master-card-head">
               <svg fill="none" viewBox="0 0 18 18" width="16" height="16"><rect x="2" y="5" width="14" height="8" rx="1.5" stroke="currentColor" stroke-width="1.5"></rect><path d="M5 9h.01M8 9h.01M11 9h.01M14 9h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path><path d="M4 5V3.5M7 5V3.5M10 5V3.5M13 5V3.5M4 13v1.5M7 13v1.5M10 13v1.5M13 13v1.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"></path></svg>
               <span>Asset / Serial No.</span>
-              <span class="master-count" id="serial-count">2</span>
+              <span class="master-count" id="serial-count">3</span>
               <button class="master-bulk-btn" onclick="openMasterBulk('serial')" title="Bulk Upload Serials">
                 <svg fill="none" viewBox="0 0 14 14" width="12" height="12"><path d="M7 9V2M4 5l3-3 3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"></path><path d="M2 10v1.5A1.5 1.5 0 003.5 13h7a1.5 1.5 0 001.5-1.5V10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"></path></svg>
                 Bulk
@@ -2305,7 +2377,7 @@ Mon, 18 May, 2026</div>
               <!-- Department -->
               <div class="rpt-fg">
                 <div class="rpt-section-label">🏢 Department</div>
-                <select id="rpt-dept" class="flt-sel" style="width:100%;" onchange="liveReportCount()"><option value="">All Departments</option><option value="Finance">Finance</option><option value="HR">HR</option><option value="Operations">Operations</option><option value="Sales">Sales</option><option value="IT">IT</option><option value="Engineering">Engineering</option><option value="Administration">Administration</option><option value="Management">Management</option><option value="Other">Other</option></select>
+                <select id="rpt-dept" class="flt-sel" style="width:100%;" onchange="liveReportCount()"><option value="">All Departments</option><option value="Other">Other</option><option value="Chemistry">Chemistry</option><option value="Physics">Physics</option><option value="Biology">Biology</option><option value="Botany">Botany</option><option value="Admin">Admin</option><option value="Staff Room">Staff Room</option><option value="Computer Lab-1">Computer Lab-1</option><option value="Computer Lab-2">Computer Lab-2</option><option value="Computer Lab-3">Computer Lab-3</option><option value="Computer Lab-4">Computer Lab-4</option><option value="Library">Library</option><option value="NCC">NCC</option><option value="NAAC">NAAC</option><option value="Principal">Principal</option><option value="Room">Room</option><option value="IT">IT</option></select>
               </div>
 
               <!-- Status -->
@@ -2332,15 +2404,13 @@ Mon, 18 May, 2026</div>
               <!-- Technician -->
               <div class="rpt-fg">
                 <div class="rpt-section-label">👨‍🔧 Technician</div>
-                <select id="rpt-tech" class="flt-sel" style="width:100%;" onchange="liveReportCount()"><option value="">All Technicians</option><option value="Mahesh Patel">Mahesh Patel</option><option value="Vishal Chauhan(GC)">Vishal Chauhan(GC)</option><option value="Sudhir Chauhan">Sudhir Chauhan</option><option value="Ashish Panchal(ZC)">Ashish Panchal(ZC)</option><option value="Ramesh Prajapati(GC)">Ramesh Prajapati(GC)</option><option value="Kaushik Sisodiya(RI)">Kaushik Sisodiya(RI)</option></select>
+                <select id="rpt-tech" class="flt-sel" style="width:100%;" onchange="liveReportCount()"><option value="">All Technicians</option><option value="Mahesh Patel">Mahesh Patel</option><option value="Vishal Chauhan(GC)">Vishal Chauhan(GC)</option><option value="Sudhir Chauhan">Sudhir Chauhan</option><option value="Ashish Panchal(ZC)">Ashish Panchal(ZC)</option><option value="Ramesh Prajapati(GC)">Ramesh Prajapati(GC)</option><option value="Kaushik Sisodiya(RI)">Kaushik Sisodiya(RI)</option><option value="Sanjay Panchal(ZT)">Sanjay Panchal(ZT)</option><option value="Dhaval Mehta">Dhaval Mehta</option><option value="Thakor(GC)">Thakor(GC)</option><option value="Hiren (RI)">Hiren (RI)</option></select>
               </div>
 
               <!-- Make/Model -->
               <div class="rpt-fg">
                 <div class="rpt-section-label">💻 Make / Model</div>
-                <select id="rpt-model" class="flt-sel" style="width:100%;" onchange="liveReportCount()">
-                  <option value="">All Models</option>
-                </select>
+                <select id="rpt-model" class="flt-sel" style="width:100%;" onchange="liveReportCount()"><option value="">All Models</option><option>Dell OptiPlex 7020 Tower</option><option>HP EliteDesk 800</option><option>Lenovo ThinkCentre M720</option><option>Acer Veriton S2690G</option><option>HCL Infinity</option><option>Hp Laserjet 1020 Plus</option><option>Brother DCP-L2640DW</option><option>Brother DCP -L2541DW</option><option>HP Laserjet M1005</option></select>
               </div>
 
               <!-- Caller Name -->
@@ -2359,7 +2429,7 @@ Mon, 18 May, 2026</div>
 
             <!-- Live count bar -->
             <div class="rpt-count-bar">
-              <span id="rpt-live-count" style="font-weight:700;color:var(--accent);">0 tickets</span>
+              <span id="rpt-live-count" style="font-weight:700;color:var(--accent);">19 tickets</span>
               <span style="color:var(--ink3);">match current filters</span>
               <div style="margin-left:auto;">
                 <span id="rpt-active-chips" style="display:flex;gap:5px;flex-wrap:wrap;"></span>
@@ -2392,47 +2462,176 @@ Mon, 18 May, 2026</div>
 
       <!-- ── DASHBOARD ── -->
       <div class="view" id="view-dashboard">
-        <div class="dash-stats" id="dash-stats"><div class="ds-card c-total"><div class="ds-val">10</div><div class="ds-lbl">Total Tickets</div><div class="ds-sub">All time</div></div><div class="ds-card c-open"><div class="ds-val">0</div><div class="ds-lbl">Open</div><div class="ds-sub">0 in progress</div></div><div class="ds-card c-resolved"><div class="ds-val">10</div><div class="ds-lbl">Closed</div><div class="ds-sub">100% resolution rate</div></div><div class="ds-card c-crit"><div class="ds-val">0</div><div class="ds-lbl">P1 Critical</div><div class="ds-sub">0 pending parts</div></div></div>
+        <div class="dash-stats" id="dash-stats"><div class="ds-card c-total"><div class="ds-val">19</div><div class="ds-lbl">Total Tickets</div><div class="ds-sub">All time</div></div><div class="ds-card c-open"><div class="ds-val">6</div><div class="ds-lbl">Open</div><div class="ds-sub">2 in progress</div></div><div class="ds-card c-resolved"><div class="ds-val">11</div><div class="ds-lbl">Closed</div><div class="ds-sub">58% resolution rate</div></div><div class="ds-card c-crit"><div class="ds-val">0</div><div class="ds-lbl">P1 Critical</div><div class="ds-sub">0 pending parts</div></div></div>
         <div class="dash-grid">
           <div class="card">
             <div class="card-head">
               <div class="card-head-icon"><svg fill="none" viewBox="0 0 14 14"><path d="M2 12V8M5 12V5M8 12V7M11 12V3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"></path></svg></div>
               <span class="card-head-title">Tickets by Priority</span>
             </div>
-            <div class="card-body"><div class="bar-row" id="dash-pri"><div class="bar-item"><div class="bar-head"><span class="bar-label">P1 — Critical</span><span class="bar-val">0</span></div><div class="bar-track"><div class="bar-fill" style="width:0%;background:var(--red)"></div></div></div><div class="bar-item"><div class="bar-head"><span class="bar-label">P2 — High</span><span class="bar-val">2</span></div><div class="bar-track"><div class="bar-fill" style="width:20%;background:var(--amber)"></div></div></div><div class="bar-item"><div class="bar-head"><span class="bar-label">P3 — Medium</span><span class="bar-val">4</span></div><div class="bar-track"><div class="bar-fill" style="width:40%;background:var(--blue)"></div></div></div><div class="bar-item"><div class="bar-head"><span class="bar-label">P4 — Low</span><span class="bar-val">4</span></div><div class="bar-track"><div class="bar-fill" style="width:40%;background:var(--green)"></div></div></div></div></div>
+            <div class="card-body"><div class="bar-row" id="dash-pri"><div class="bar-item"><div class="bar-head"><span class="bar-label">P1 — Critical</span><span class="bar-val">0</span></div><div class="bar-track"><div class="bar-fill" style="width:0%;background:var(--red)"></div></div></div><div class="bar-item"><div class="bar-head"><span class="bar-label">P2 — High</span><span class="bar-val">2</span></div><div class="bar-track"><div class="bar-fill" style="width:11%;background:var(--amber)"></div></div></div><div class="bar-item"><div class="bar-head"><span class="bar-label">P3 — Medium</span><span class="bar-val">7</span></div><div class="bar-track"><div class="bar-fill" style="width:37%;background:var(--blue)"></div></div></div><div class="bar-item"><div class="bar-head"><span class="bar-label">P4 — Low</span><span class="bar-val">10</span></div><div class="bar-track"><div class="bar-fill" style="width:53%;background:var(--green)"></div></div></div></div></div>
           </div>
           <div class="card">
             <div class="card-head">
               <div class="card-head-icon"><svg fill="none" viewBox="0 0 14 14"><circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.3"></circle><path d="M4.5 7l2 2 3-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
               <span class="card-head-title">Tickets by Status</span>
             </div>
-            <div class="card-body"><div class="bar-row" id="dash-stat"><div class="bar-item"><div class="bar-head"><span class="bar-label">Open</span><span class="bar-val">0</span></div><div class="bar-track"><div class="bar-fill" style="width:0%;background:var(--blue)"></div></div></div><div class="bar-item"><div class="bar-head"><span class="bar-label">In Progress</span><span class="bar-val">0</span></div><div class="bar-track"><div class="bar-fill" style="width:0%;background:var(--purple)"></div></div></div><div class="bar-item"><div class="bar-head"><span class="bar-label">Pending Parts</span><span class="bar-val">0</span></div><div class="bar-track"><div class="bar-fill" style="width:0%;background:var(--amber)"></div></div></div><div class="bar-item"><div class="bar-head"><span class="bar-label">Closed</span><span class="bar-val">10</span></div><div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--red)"></div></div></div></div></div>
+            <div class="card-body"><div class="bar-row" id="dash-stat"><div class="bar-item"><div class="bar-head"><span class="bar-label">Open</span><span class="bar-val">6</span></div><div class="bar-track"><div class="bar-fill" style="width:32%;background:var(--blue)"></div></div></div><div class="bar-item"><div class="bar-head"><span class="bar-label">In Progress</span><span class="bar-val">2</span></div><div class="bar-track"><div class="bar-fill" style="width:11%;background:var(--purple)"></div></div></div><div class="bar-item"><div class="bar-head"><span class="bar-label">Pending Parts</span><span class="bar-val">0</span></div><div class="bar-track"><div class="bar-fill" style="width:0%;background:var(--amber)"></div></div></div><div class="bar-item"><div class="bar-head"><span class="bar-label">Closed</span><span class="bar-val">11</span></div><div class="bar-track"><div class="bar-fill" style="width:58%;background:var(--red)"></div></div></div></div></div>
           </div>
           <div class="card">
             <div class="card-head">
               <div class="card-head-icon"><svg fill="none" viewBox="0 0 14 14"><rect x="1" y="2" width="12" height="8" rx="1.5" stroke="currentColor" stroke-width="1.3"></rect><path d="M4 13h6M7 10v3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"></path></svg></div>
               <span class="card-head-title">Tickets by Device Type</span>
             </div>
-            <div class="card-body"><div class="bar-row" id="dash-device"><div class="bar-item"><div class="bar-head"><span class="bar-label">Desktop PC</span><span class="bar-val">5</span></div><div class="bar-track"><div class="bar-fill" style="width:50%;background:var(--accent)"></div></div></div><div class="bar-item"><div class="bar-head"><span class="bar-label">Scanner</span><span class="bar-val">2</span></div><div class="bar-track"><div class="bar-fill" style="width:20%;background:var(--accent)"></div></div></div><div class="bar-item"><div class="bar-head"><span class="bar-label">Storage Device</span><span class="bar-val">1</span></div><div class="bar-track"><div class="bar-fill" style="width:10%;background:var(--accent)"></div></div></div><div class="bar-item"><div class="bar-head"><span class="bar-label">Server</span><span class="bar-val">1</span></div><div class="bar-track"><div class="bar-fill" style="width:10%;background:var(--accent)"></div></div></div></div></div>
+            <div class="card-body"><div class="bar-row" id="dash-device"><div class="bar-item"><div class="bar-head"><span class="bar-label">Desktop</span><span class="bar-val">6</span></div><div class="bar-track"><div class="bar-fill" style="width:32%;background:var(--accent)"></div></div></div><div class="bar-item"><div class="bar-head"><span class="bar-label">Desktop PC</span><span class="bar-val">5</span></div><div class="bar-track"><div class="bar-fill" style="width:26%;background:var(--accent)"></div></div></div><div class="bar-item"><div class="bar-head"><span class="bar-label">Laptop</span><span class="bar-val">2</span></div><div class="bar-track"><div class="bar-fill" style="width:11%;background:var(--accent)"></div></div></div><div class="bar-item"><div class="bar-head"><span class="bar-label">Scanner</span><span class="bar-val">2</span></div><div class="bar-track"><div class="bar-fill" style="width:11%;background:var(--accent)"></div></div></div><div class="bar-item"><div class="bar-head"><span class="bar-label">Mouse</span><span class="bar-val">1</span></div><div class="bar-track"><div class="bar-fill" style="width:5%;background:var(--accent)"></div></div></div><div class="bar-item"><div class="bar-head"><span class="bar-label">Storage Device</span><span class="bar-val">1</span></div><div class="bar-track"><div class="bar-fill" style="width:5%;background:var(--accent)"></div></div></div></div></div>
           </div>
           <div class="card">
             <div class="card-head">
               <div class="card-head-icon"><svg fill="none" viewBox="0 0 14 14"><circle cx="7" cy="5" r="2.5" stroke="currentColor" stroke-width="1.3"></circle><path d="M1.5 13c0-2 2.5-3.5 5.5-3.5s5.5 1.5 5.5 3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"></path></svg></div>
               <span class="card-head-title">Tickets by Technician</span>
             </div>
-            <div class="card-body"><div class="bar-row" id="dash-tech"><div class="bar-item"><div class="bar-head"><span class="bar-label">Unassigned</span><span class="bar-val">8</span></div><div class="bar-track"><div class="bar-fill" style="width:80%;background:var(--purple)"></div></div></div><div class="bar-item"><div class="bar-head"><span class="bar-label">Arjun Mehta</span><span class="bar-val">1</span></div><div class="bar-track"><div class="bar-fill" style="width:10%;background:var(--purple)"></div></div></div><div class="bar-item"><div class="bar-head"><span class="bar-label">Priya Nair</span><span class="bar-val">1</span></div><div class="bar-track"><div class="bar-fill" style="width:10%;background:var(--purple)"></div></div></div></div></div>
+            <div class="card-body"><div class="bar-row" id="dash-tech"><div class="bar-item"><div class="bar-head"><span class="bar-label">Unassigned</span><span class="bar-val">14</span></div><div class="bar-track"><div class="bar-fill" style="width:74%;background:var(--purple)"></div></div></div><div class="bar-item"><div class="bar-head"><span class="bar-label">Mahesh Patel</span><span class="bar-val">3</span></div><div class="bar-track"><div class="bar-fill" style="width:16%;background:var(--purple)"></div></div></div><div class="bar-item"><div class="bar-head"><span class="bar-label">Arjun Mehta</span><span class="bar-val">1</span></div><div class="bar-track"><div class="bar-fill" style="width:5%;background:var(--purple)"></div></div></div><div class="bar-item"><div class="bar-head"><span class="bar-label">Priya Nair</span><span class="bar-val">1</span></div><div class="bar-track"><div class="bar-fill" style="width:5%;background:var(--purple)"></div></div></div></div></div>
           </div>
         </div>
         <div class="card">
           <div class="card-head">
             <div class="card-head-icon"><svg fill="none" viewBox="0 0 14 14"><path d="M2 3h10M2 6h10M2 9h7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"></path></svg></div>
-            <span class="card-head-title">Recent Tickets (<span id="dash-recent-count">10</span>)</span>
+            <span class="card-head-title">Recent Tickets (<span id="dash-recent-count">19</span>)</span>
           </div>
           <div class="card-body" style="padding:0 0 4px;">
-            <div id="dash-recent"><div style="display:flex;align-items:center;gap:12px;padding:11px 18px;border-bottom:1px solid var(--border);font-size:13px;cursor:pointer;" onclick="viewTicket('HW-9656')"><span style="font-family:var(--mono);font-size:11px;color:var(--accent);white-space:nowrap;">HW-9656</span><span style="font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Mahesh Patel</span><span style="color:var(--ink3);font-size:12px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">—</span><span class="pill pill-p3">P3</span><span class="pill pill-resolved">Closed</span><span style="font-family:var(--mono);font-size:11px;color:var(--ink3);white-space:nowrap;">16 May 2026</span></div><div style="display:flex;align-items:center;gap:12px;padding:11px 18px;border-bottom:1px solid var(--border);font-size:13px;cursor:pointer;" onclick="viewTicket('HW-2403')"><span style="font-family:var(--mono);font-size:11px;color:var(--accent);white-space:nowrap;">HW-2403</span><span style="font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Mahesh Patel</span><span style="color:var(--ink3);font-size:12px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Desktop PC</span><span class="pill pill-p3">P3</span><span class="pill pill-resolved">Closed</span><span style="font-family:var(--mono);font-size:11px;color:var(--ink3);white-space:nowrap;">16 May 2026</span></div><div style="display:flex;align-items:center;gap:12px;padding:11px 18px;border-bottom:1px solid var(--border);font-size:13px;cursor:pointer;" onclick="viewTicket('HW-2110')"><span style="font-family:var(--mono);font-size:11px;color:var(--accent);white-space:nowrap;">HW-2110</span><span style="font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Mahesh Patel</span><span style="color:var(--ink3);font-size:12px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Desktop PC</span><span class="pill pill-p3">P3</span><span class="pill pill-resolved">Closed</span><span style="font-family:var(--mono);font-size:11px;color:var(--ink3);white-space:nowrap;">14 May 2026</span></div><div style="display:flex;align-items:center;gap:12px;padding:11px 18px;border-bottom:1px solid var(--border);font-size:13px;cursor:pointer;" onclick="viewTicket('HW-4707')"><span style="font-family:var(--mono);font-size:11px;color:var(--accent);white-space:nowrap;">HW-4707</span><span style="font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Mahesh Patel</span><span style="color:var(--ink3);font-size:12px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Storage Device</span><span class="pill pill-p3">P3</span><span class="pill pill-resolved">Closed</span><span style="font-family:var(--mono);font-size:11px;color:var(--ink3);white-space:nowrap;">12 May 2026</span></div><div style="display:flex;align-items:center;gap:12px;padding:11px 18px;border-bottom:1px solid var(--border);font-size:13px;cursor:pointer;" onclick="viewTicket('HW-6007')"><span style="font-family:var(--mono);font-size:11px;color:var(--accent);white-space:nowrap;">HW-6007</span><span style="font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Sudhir Chauhan</span><span style="color:var(--ink3);font-size:12px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Scanner</span><span class="pill pill-p4">P4</span><span class="pill pill-resolved">Closed</span><span style="font-family:var(--mono);font-size:11px;color:var(--ink3);white-space:nowrap;">12 May 2026</span></div><div style="display:flex;align-items:center;gap:12px;padding:11px 18px;border-bottom:1px solid var(--border);font-size:13px;cursor:pointer;" onclick="viewTicket('HW-1050')"><span style="font-family:var(--mono);font-size:11px;color:var(--accent);white-space:nowrap;">HW-1050</span><span style="font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">ramila salvi</span><span style="color:var(--ink3);font-size:12px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Desktop PC</span><span class="pill pill-p2">P2</span><span class="pill pill-resolved">Closed</span><span style="font-family:var(--mono);font-size:11px;color:var(--ink3);white-space:nowrap;">12 May 2026</span></div><div style="display:flex;align-items:center;gap:12px;padding:11px 18px;border-bottom:1px solid var(--border);font-size:13px;cursor:pointer;" onclick="viewTicket('HW-3036')"><span style="font-family:var(--mono);font-size:11px;color:var(--accent);white-space:nowrap;">HW-3036</span><span style="font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Sudhir Chauhan</span><span style="color:var(--ink3);font-size:12px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Server</span><span class="pill pill-p2">P2</span><span class="pill pill-resolved">Closed</span><span style="font-family:var(--mono);font-size:11px;color:var(--ink3);white-space:nowrap;">12 May 2026</span></div><div style="display:flex;align-items:center;gap:12px;padding:11px 18px;border-bottom:1px solid var(--border);font-size:13px;cursor:pointer;" onclick="viewTicket('HW-5455')"><span style="font-family:var(--mono);font-size:11px;color:var(--accent);white-space:nowrap;">HW-5455</span><span style="font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Mahesh Patel</span><span style="color:var(--ink3);font-size:12px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Desktop PC</span><span class="pill pill-p4">P4</span><span class="pill pill-resolved">Closed</span><span style="font-family:var(--mono);font-size:11px;color:var(--ink3);white-space:nowrap;">12 May 2026</span></div></div>
+            <div id="dash-recent"><div style="display:flex;align-items:center;gap:12px;padding:11px 18px;border-bottom:1px solid var(--border);font-size:13px;cursor:pointer;" onclick="viewTicket('HW-9300')"><span style="font-family:var(--mono);font-size:11px;color:var(--accent);white-space:nowrap;">HW-9300</span><span style="font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Mahesh Patel</span><span style="color:var(--ink3);font-size:12px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Desktop</span><span class="pill pill-p4">P4</span><span class="pill pill-open">Open</span><span style="font-family:var(--mono);font-size:11px;color:var(--ink3);white-space:nowrap;">25 May 2026</span></div><div style="display:flex;align-items:center;gap:12px;padding:11px 18px;border-bottom:1px solid var(--border);font-size:13px;cursor:pointer;" onclick="viewTicket('HW-7530')"><span style="font-family:var(--mono);font-size:11px;color:var(--accent);white-space:nowrap;">HW-7530</span><span style="font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Kuldeep Mathur</span><span style="color:var(--ink3);font-size:12px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Desktop</span><span class="pill pill-p4">P4</span><span class="pill pill-open">Open</span><span style="font-family:var(--mono);font-size:11px;color:var(--ink3);white-space:nowrap;">19 May 2026</span></div><div style="display:flex;align-items:center;gap:12px;padding:11px 18px;border-bottom:1px solid var(--border);font-size:13px;cursor:pointer;" onclick="viewTicket('HW-3942')"><span style="font-family:var(--mono);font-size:11px;color:var(--accent);white-space:nowrap;">HW-3942</span><span style="font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Mahesh Patel</span><span style="color:var(--ink3);font-size:12px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Desktop</span><span class="pill pill-p4">P4</span><span class="pill pill-open">Open</span><span style="font-family:var(--mono);font-size:11px;color:var(--ink3);white-space:nowrap;">19 May 2026</span></div><div style="display:flex;align-items:center;gap:12px;padding:11px 18px;border-bottom:1px solid var(--border);font-size:13px;cursor:pointer;" onclick="viewTicket('HW-2830')"><span style="font-family:var(--mono);font-size:11px;color:var(--accent);white-space:nowrap;">HW-2830</span><span style="font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Kuldeep Mathur</span><span style="color:var(--ink3);font-size:12px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Desktop</span><span class="pill pill-p4">P4</span><span class="pill pill-inprog">In Progress</span><span style="font-family:var(--mono);font-size:11px;color:var(--ink3);white-space:nowrap;">19 May 2026</span></div><div style="display:flex;align-items:center;gap:12px;padding:11px 18px;border-bottom:1px solid var(--border);font-size:13px;cursor:pointer;" onclick="viewTicket('HW-5976')"><span style="font-family:var(--mono);font-size:11px;color:var(--accent);white-space:nowrap;">HW-5976</span><span style="font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Sudhir Chauhan</span><span style="color:var(--ink3);font-size:12px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Desktop</span><span class="pill pill-p4">P4</span><span class="pill pill-open">Open</span><span style="font-family:var(--mono);font-size:11px;color:var(--ink3);white-space:nowrap;">19 May 2026</span></div><div style="display:flex;align-items:center;gap:12px;padding:11px 18px;border-bottom:1px solid var(--border);font-size:13px;cursor:pointer;" onclick="viewTicket('HW-4962')"><span style="font-family:var(--mono);font-size:11px;color:var(--accent);white-space:nowrap;">HW-4962</span><span style="font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Sudhir Chauhan</span><span style="color:var(--ink3);font-size:12px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Laptop</span><span class="pill pill-p4">P4</span><span class="pill pill-resolved">Closed</span><span style="font-family:var(--mono);font-size:11px;color:var(--ink3);white-space:nowrap;">19 May 2026</span></div><div style="display:flex;align-items:center;gap:12px;padding:11px 18px;border-bottom:1px solid var(--border);font-size:13px;cursor:pointer;" onclick="viewTicket('HW-9039')"><span style="font-family:var(--mono);font-size:11px;color:var(--accent);white-space:nowrap;">HW-9039</span><span style="font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Mahesh Patel</span><span style="color:var(--ink3);font-size:12px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Laptop</span><span class="pill pill-p3">P3</span><span class="pill pill-open">Open</span><span style="font-family:var(--mono);font-size:11px;color:var(--ink3);white-space:nowrap;">18 May 2026</span></div><div style="display:flex;align-items:center;gap:12px;padding:11px 18px;border-bottom:1px solid var(--border);font-size:13px;cursor:pointer;" onclick="viewTicket('HW-2458')"><span style="font-family:var(--mono);font-size:11px;color:var(--accent);white-space:nowrap;">HW-2458</span><span style="font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Milan Dave</span><span style="color:var(--ink3);font-size:12px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Mouse</span><span class="pill pill-p3">P3</span><span class="pill pill-open">Open</span><span style="font-family:var(--mono);font-size:11px;color:var(--ink3);white-space:nowrap;">18 May 2026</span></div></div>
           </div>
         </div>
       </div>
+
+      <!-- ── SETTINGS ── -->
+      <div class="view active" id="view-settings">
+        <div style="margin-bottom:24px;">
+          <div style="font-size:20px;font-weight:800;color:var(--ink);margin-bottom:4px;">Settings</div>
+          <div style="font-size:13px;color:var(--ink3);">Admin-only configuration for HardDesk.</div>
+        </div>
+
+        <!-- Change Password card -->
+        <div class="card" style="margin-bottom:16px;max-width:680px;">
+          <div class="card-head">
+            <div class="card-head-icon"><svg fill="none" viewBox="0 0 14 14" width="14" height="14"><rect x="3" y="6" width="8" height="7" rx="1.2" stroke="currentColor" stroke-width="1.3"></rect><path d="M5 6V4.5a2 2 0 014 0V6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"></path><circle cx="7" cy="9.5" r="1" fill="currentColor"></circle></svg></div>
+            <span class="card-head-title">Change Password</span>
+          </div>
+          <div class="card-body">
+            <p style="font-size:13px;color:var(--ink2);line-height:1.65;margin-bottom:14px;">Update the password for the currently logged-in account.</p>
+            <button class="btn btn-accent btn-sm" onclick="openPwdModal()">
+              <svg fill="none" viewBox="0 0 14 14" width="13" height="13"><rect x="3" y="6" width="8" height="7" rx="1.2" stroke="currentColor" stroke-width="1.3"></rect><path d="M5 6V4.5a2 2 0 014 0V6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"></path></svg>
+              Change Password
+            </button>
+          </div>
+        </div>
+
+        <!-- Database / Firebase card -->
+        <div class="card" style="margin-bottom:16px;max-width:680px;">
+          <div class="card-head">
+            <div class="card-head-icon"><svg fill="none" viewBox="0 0 14 14" width="14" height="14"><path d="M2 11L5 2l2.5 4.5L9 4l3 7H2z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"></path></svg></div>
+            <span class="card-head-title">Firebase Database</span>
+            <span class="db-status-pill cloud" id="db-status-pill" title="Data storage mode" style="margin-left:auto;">
+              <span class="db-dot"></span>
+              <span id="db-status-label">Firebase sync active</span>
+            </span>
+          </div>
+          <div class="card-body">
+            <p style="font-size:13px;color:var(--ink2);line-height:1.65;margin-bottom:14px;">Configure the Firebase Firestore connection for real-time cloud sync across all devices.</p>
+            <button class="btn btn-sm connected" id="btn-firebase-settings" onclick="openFirebaseModal()" style="background:var(--surface2);border:1.5px solid var(--border);">
+              <svg fill="none" viewBox="0 0 14 14" width="13" height="13"><path d="M2 11L5 2l2.5 4.5L9 4l3 7H2z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"></path></svg>
+              Database Settings
+            </button>
+          </div>
+        </div>
+
+        <!-- Email card -->
+        <div class="card" style="margin-bottom:16px;max-width:680px;">
+          <div class="card-head">
+            <div class="card-head-icon"><svg fill="none" viewBox="0 0 14 14" width="14" height="14"><rect x="1" y="3" width="12" height="9" rx="1.5" stroke="currentColor" stroke-width="1.3"></rect><path d="M1 4l6 5 6-5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"></path></svg></div>
+            <span class="card-head-title">Email Notifications</span>
+            <span id="settings-email-status" style="margin-left:auto;font-size:11px;font-weight:600;padding:3px 8px;border-radius:20px;background:var(--amber-bg);color:var(--amber);border:1px solid #fcd34d;" class="admin-only"></span>
+          </div>
+          <div class="card-body">
+            <p style="font-size:13px;color:var(--ink2);line-height:1.65;margin-bottom:14px;">Configure EmailJS to send automatic notifications when tickets are created, updated, or closed.</p>
+            <button class="btn btn-sm" onclick="openEmailModal()" style="background:var(--surface2);border:1.5px solid var(--border);">
+              <svg fill="none" viewBox="0 0 14 14" width="13" height="13"><rect x="1" y="3" width="12" height="9" rx="1.5" stroke="currentColor" stroke-width="1.3"></rect><path d="M1 4l6 5 6-5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"></path></svg>
+              Email Settings
+            </button>
+          </div>
+        </div>
+
+        <!-- Bake & Deploy card -->
+        <div class="card" style="margin-bottom:16px;max-width:680px;">
+          <div class="card-head">
+            <div class="card-head-icon"><svg fill="none" viewBox="0 0 14 14" width="14" height="14"><path d="M7 9V2M4 6l3 3 3-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"></path><path d="M2 11h10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"></path></svg></div>
+            <span class="card-head-title">Bake &amp; Deploy</span>
+          </div>
+          <div class="card-body">
+            <p style="font-size:13px;color:var(--ink2);line-height:1.65;margin-bottom:14px;">Embed all current master data (institutions, departments, technicians, devices, models) into the HTML file for Netlify deployment.</p>
+            <button class="btn btn-sm" onclick="bakeAndDownload()" style="background:#f0fdf4;border:1.5px solid #86efac;color:#166534;">
+              <svg fill="none" viewBox="0 0 14 14" width="13" height="13"><path d="M7 9V2M4 6l3 3 3-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"></path><path d="M2 11h10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"></path></svg>
+              Bake &amp; Deploy
+            </button>
+          </div>
+        </div>
+
+        <!-- Recovery Key card -->
+        <div class="card" style="margin-bottom:16px;max-width:680px;">
+          <div class="card-head">
+            <div class="card-head-icon">
+              <svg fill="none" viewBox="0 0 14 14" width="14" height="14"><path d="M9 2a3 3 0 100 6 3 3 0 000-6zM6.17 6.83L2 11v1h2v-1h1V9.83" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </div>
+            <span class="card-head-title">Password Recovery Key</span>
+          </div>
+          <div class="card-body">
+            <p style="font-size:13px;color:var(--ink2);line-height:1.65;margin-bottom:16px;">
+              This key is used on the login screen to reset the admin password if it is forgotten. Keep it secret and store it safely.
+            </p>
+            <label style="display:block;font-family:var(--mono);font-size:9.5px;font-weight:600;text-transform:uppercase;letter-spacing:.12em;color:var(--ink3);margin-bottom:6px;">Current Recovery Key</label>
+            <div style="display:flex;gap:6px;margin-bottom:20px;">
+              <input type="password" id="settings-rkey-display" readonly="" style="flex:1;padding:9px 12px;border-radius:var(--r);border:1.5px solid var(--border);font-size:13px;font-family:var(--mono);color:var(--ink);background:var(--surface2);outline:none;">
+              <button class="btn btn-sm" onclick="toggleRkeyVisibility()" title="Show/hide key" style="background:var(--surface2);border:1.5px solid var(--border);">
+                <svg fill="none" viewBox="0 0 14 14" width="14" height="14"><path d="M1 7s2.5-4 6-4 6 4 6 4-2.5 4-6 4-6-4-6-4z" stroke="currentColor" stroke-width="1.3"></path><circle cx="7" cy="7" r="1.5" stroke="currentColor" stroke-width="1.3"></circle></svg>
+              </button>
+            </div>
+            <div style="padding-top:16px;border-top:1px solid var(--border);">
+              <label style="display:block;font-family:var(--mono);font-size:9.5px;font-weight:600;text-transform:uppercase;letter-spacing:.12em;color:var(--ink3);margin-bottom:6px;">Change Recovery Key</label>
+              <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                <input type="text" id="settings-rkey-new" placeholder="New recovery key…" style="flex:1;min-width:180px;padding:9px 12px;border-radius:var(--r);border:1.5px solid var(--border);font-size:13px;font-family:var(--mono);color:var(--ink);background:var(--bg);outline:none;" onkeydown="if(event.key==='Enter')saveRecoveryKey()">
+                <input type="text" id="settings-rkey-confirm" placeholder="Confirm new key…" style="flex:1;min-width:180px;padding:9px 12px;border-radius:var(--r);border:1.5px solid var(--border);font-size:13px;font-family:var(--mono);color:var(--ink);background:var(--bg);outline:none;" onkeydown="if(event.key==='Enter')saveRecoveryKey()">
+                <button class="btn btn-accent btn-sm" onclick="saveRecoveryKey()">
+                  <svg fill="none" viewBox="0 0 14 14" width="13" height="13"><path d="M2 7l3.5 3.5L12 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                  Save Key
+                </button>
+              </div>
+              <div id="settings-rkey-error" style="display:none;margin-top:8px;background:var(--red-bg);color:var(--red);border:1px solid #e9b0ac;border-radius:var(--r);padding:7px 11px;font-size:12px;font-weight:600;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Idle Timeout card -->
+        <div class="card" style="max-width:680px;">
+          <div class="card-head">
+            <div class="card-head-icon">
+              <svg fill="none" viewBox="0 0 14 14" width="14" height="14"><circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.3"></circle><path d="M7 4v3.5l2 2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"></path></svg>
+            </div>
+            <span class="card-head-title">Idle Timeout</span>
+          </div>
+          <div class="card-body">
+            <p style="font-size:13px;color:var(--ink2);line-height:1.65;margin-bottom:14px;">Auto-logout after this many minutes of inactivity. <span id="settings-idle-warn-note" style="color:var(--ink3);">Warning banner appears 60s before logout.</span></p>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <input type="number" id="settings-idle-min" min="1" max="120" value="2" style="width:90px;padding:9px 12px;border-radius:var(--r);border:1.5px solid var(--border);font-size:13px;font-family:var(--mono);color:var(--ink);background:var(--bg);outline:none;">
+              <span style="font-size:13px;color:var(--ink2);">minutes</span>
+              <button class="btn btn-accent btn-sm" onclick="saveIdleTimeout()">
+                <svg fill="none" viewBox="0 0 14 14" width="13" height="13"><path d="M2 7l3.5 3.5L12 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /view-settings -->
 
     </div><!-- /content-scroll -->
   </div><!-- /main -->
@@ -2571,7 +2770,72 @@ Mon, 18 May, 2026</div>
 </div>
 
 <!-- Toast container -->
-<div class="toast-wrap" id="toast-wrap"><div class="toast t-success"><div class="toast-dot"></div><span>🔥 Firebase connected — real-time sync active</span></div><div class="toast t-success"><div class="toast-dot"></div><span>🔥 Firebase connected — real-time sync active</span></div></div>
+<div class="toast-wrap" id="toast-wrap"></div>
+
+<!-- Forgot Password Modal -->
+<div class="forgot-modal-overlay" id="forgot-modal">
+  <div class="forgot-modal-box">
+    <h3 id="forgot-title">🔑 Forgot Password</h3>
+    <p class="forgot-modal-sub" id="forgot-sub">Choose the account type below.</p>
+
+    <!-- User section -->
+    <div id="forgot-user-section">
+      <div class="forgot-info-box">
+        <strong>Regular User Account</strong><br>
+        You cannot reset your own password. Please contact your <strong>Administrator</strong> — they can reset it from the Users management panel in their admin dashboard.
+      </div>
+    </div>
+
+    <!-- Admin section -->
+    <div id="forgot-admin-section" style="display:none;">
+      <div class="forgot-info-box">
+        <strong>Admin Account Recovery</strong><br>
+        Enter your master recovery key to reset the admin password back to <code>admin123</code>. The recovery key is set by the administrator in the Settings panel.
+      </div>
+      <div class="pwd-field">
+        <label class="reset-key-label">Master Recovery Key</label>
+        <input type="text" id="forgot-recovery-key" placeholder="Enter recovery key…" autocomplete="off" onkeydown="if(event.key==='Enter')doAdminReset()">
+      </div>
+      <div class="pwd-error" id="forgot-error"></div>
+    </div>
+
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:6px;">
+      <button class="btn" onclick="closeForgotModal()">Close</button>
+      <button class="btn btn-accent" id="forgot-ok-btn" onclick="doAdminReset()" style="display:none;">
+        <svg fill="none" viewBox="0 0 14 14" width="13" height="13"><path d="M2 7a5 5 0 105.5-4.97M2 7V4M2 7H5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        Reset Password
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Password Change Modal -->
+<div class="pwd-modal-overlay" id="pwd-modal">
+  <div class="pwd-modal-box">
+    <h3>🔒 Change Password</h3>
+    <p class="pwd-modal-sub">Enter your current password then choose a new one.</p>
+    <div class="pwd-error" id="pwd-error" style="display: none;"></div>
+    <div class="pwd-field">
+      <label>Current Password</label>
+      <input type="password" id="pwd-current" placeholder="Your current password" autocomplete="current-password">
+    </div>
+    <div class="pwd-field">
+      <label>New Password</label>
+      <input type="password" id="pwd-new" placeholder="At least 4 characters" autocomplete="new-password">
+    </div>
+    <div class="pwd-field">
+      <label>Confirm New Password</label>
+      <input type="password" id="pwd-confirm" placeholder="Repeat new password" autocomplete="new-password" onkeydown="if(event.key==='Enter')savePwd()">
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:6px;">
+      <button class="btn" onclick="closePwdModal()">Cancel</button>
+      <button class="btn btn-accent" onclick="savePwd()">
+        <svg fill="none" viewBox="0 0 14 14" width="13" height="13"><path d="M2 7l3.5 3.5L12 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        Update Password
+      </button>
+    </div>
+  </div>
+</div>
 
 <!-- Confirm Modal -->
 <div class="modal-overlay" id="modal">
@@ -2737,7 +3001,9 @@ var fbUnsubscribers = [];
 //  will auto-connect without any manual setup.
 //  Your config is safe to embed here (it's a public API key).
 // ═══════════════════════════════════════════════════════════════
-var FIREBASE_CONFIG = {"apiKey":"AIzaSyBc3cJ-oEYl4lu_lw9Axo3YC_ms8u_V-cI","authDomain":"hw-ticket-system.firebaseapp.com","projectId":"hw-ticket-system","storageBucket":"hw-ticket-system.firebasestorage.app","messagingSenderId":"516478121656","appId":"1:516478121656:web:4f732b06216baa1952a64d"}; localStorage.setItem('hd_firebase_cfg', JSON.stringify(FIREBASE_CONFIG));
+var FIREBASE_CONFIG = {"apiKey":"AIzaSyBc3cJ-oEYl4lu_lw9Axo3YC_ms8u_V-cI","authDomain":"hw-ticket-system.firebaseapp.com","projectId":"hw-ticket-system","storageBucket":"hw-ticket-system.firebasestorage.app","messagingSenderId":"516478121656","appId":"1:516478121656:web:4f732b06216baa1952a64d"};
+// Only seed localStorage if no config has been saved yet (preserves any admin UI changes)
+if (!localStorage.getItem('hd_firebase_cfg')) { localStorage.setItem('hd_firebase_cfg', JSON.stringify(FIREBASE_CONFIG)); }
 // ^ If admin saved it via UI, use that. Otherwise null = local mode.
 
 // ── EmailJS config (persisted in localStorage) ──
@@ -2771,6 +3037,11 @@ var USERS = {
       USERS[k] = saved[k];
     });
   } catch(e) {}
+  // Restore admin password if it was changed in a previous session
+  try {
+    var savedAdminPwd = localStorage.getItem('hd_admin_pwd');
+    if (savedAdminPwd) USERS['admin'].password = savedAdminPwd;
+  } catch(e) {}
 })();
 
 // ═══════════════════════════════════════════════════════════════
@@ -2792,16 +3063,7 @@ var slaTargets = { p1:1, p2:2, p3:4, p4:8 };
 //  INIT
 // ═══════════════════════════════════════════════════════════════
 function init() {
-  // Check for saved session
-  try {
-    var saved = JSON.parse(sessionStorage.getItem('hd_session') || 'null');
-    if (saved && USERS[saved.username]) {
-      currentUser = saved;
-      showApp();
-    }
-    // else stays on login screen
-  } catch(e) {}
-
+  // Always start at the login screen — no session persistence across page loads
   try { tickets = JSON.parse(localStorage.getItem('hd_tickets') || '[]'); } catch(e) { tickets = []; }
   if (!db) { loadCallers(); }
 
@@ -2851,14 +3113,14 @@ function switchLoginTab(tab) {
   // Pre-fill hint
   document.getElementById('login-username').placeholder = tab === 'admin' ? 'admin' : 'user';
 
-  // Update user hint dynamically
+  // Update user hint dynamically — show account count only, never expose passwords
   if (tab === 'user') {
     var userAccounts = Object.keys(USERS).filter(function(k){ return USERS[k].role === 'user'; });
     var hintEl = document.getElementById('hint-user-creds');
     if (hintEl) {
-      hintEl.innerHTML = userAccounts.slice(0,3).map(function(k){
-        return escHtml(USERS[k].username) + ' / ' + escHtml(USERS[k].password);
-      }).join('<br>');
+      hintEl.innerHTML = userAccounts.length
+        ? userAccounts.length + ' user account' + (userAccounts.length !== 1 ? 's' : '') + ' available'
+        : 'No user accounts created yet';
     }
   }
 }
@@ -2883,7 +3145,6 @@ function doLogin() {
 
   err.classList.remove('show');
   currentUser = { username: matched.username, role: matched.role, displayName: matched.displayName };
-  sessionStorage.setItem('hd_session', JSON.stringify(currentUser));
   showApp();
   toast('Welcome, ' + matched.displayName + '!', 'success');
 }
@@ -2891,62 +3152,67 @@ function doLogin() {
 // ════════════════════════════════════════════
 //  AUTO LOGOUT — Idle session timeout
 // ════════════════════════════════════════════
-var IDLE_TIMEOUT_MS  = 15 * 60 * 1000;  // 15 minutes idle → auto logout
-var WARN_BEFORE_MS   = 60 * 1000;        // show warning 1 minute before
-var idleTimer        = null;
-var warnTimer        = null;
-var idleWarnEl       = null;
-var idleCountdown    = 60;
-var idleCountdownInt = null;
+var IDLE_TIMEOUT_MS = 2 * 60 * 1000;
+var WARN_BEFORE_MS  = 60 * 1000;
+(function() {
+  var saved = parseInt(localStorage.getItem('hd_idle_timeout_ms'), 10);
+  if (!isNaN(saved) && saved >= 60000) {
+    IDLE_TIMEOUT_MS = saved;
+    WARN_BEFORE_MS  = Math.min(60000, Math.max(10000, Math.floor(saved / 2)));
+  }
+})();
+
+var _idleTick     = null;
+var _lastActivity = Date.now();
+var idleWarnEl    = null;
+// Legacy shim variables
+var idleTimer = null; var warnTimer = null;
+var idleCountdown = 60; var idleCountdownInt = null;
+var idleWarnActive = false;
+
+function _recordActivity() { _lastActivity = Date.now(); }
 
 function startIdleWatcher() {
-  resetIdleTimer();
-  ['mousemove','keydown','mousedown','touchstart','scroll','click'].forEach(function(evt) {
-    document.addEventListener(evt, resetIdleTimer, { passive: true });
+  _lastActivity = Date.now();
+  ['mousemove','mousedown','keydown','touchstart','scroll','click'].forEach(function(e) {
+    document.addEventListener(e, _recordActivity, { passive: true });
   });
   injectIdleWarningBanner();
+  _idleTick = setInterval(function() {
+    if (!currentUser) return;
+    var elapsed   = Date.now() - _lastActivity;
+    var remaining = IDLE_TIMEOUT_MS - elapsed;
+    if (remaining <= 0) {
+      clearInterval(_idleTick); _idleTick = null;
+      _hideBannerNow();
+      toast('Session expired due to inactivity.', 'warn');
+      setTimeout(doLogout, 600);
+    } else if (remaining <= WARN_BEFORE_MS) {
+      _showBannerNow(Math.ceil(remaining / 1000));
+    } else {
+      _hideBannerNow();
+    }
+  }, 1000);
 }
 
 function stopIdleWatcher() {
-  clearTimeout(idleTimer);
-  clearTimeout(warnTimer);
-  clearInterval(idleCountdownInt);
-  hideIdleWarning();
-  ['mousemove','keydown','mousedown','touchstart','scroll','click'].forEach(function(evt) {
-    document.removeEventListener(evt, resetIdleTimer);
+  clearInterval(_idleTick); _idleTick = null;
+  _hideBannerNow();
+  ['mousemove','mousedown','keydown','touchstart','scroll','click'].forEach(function(e) {
+    document.removeEventListener(e, _recordActivity);
   });
 }
 
-function resetIdleTimer() {
-  clearTimeout(idleTimer);
-  clearTimeout(warnTimer);
-  clearInterval(idleCountdownInt);
-  hideIdleWarning();
-
-  // Set warning timer (fires WARN_BEFORE_MS before logout)
-  warnTimer = setTimeout(function() {
-    idleCountdown = Math.round(WARN_BEFORE_MS / 1000);
-    showIdleWarning(idleCountdown);
-    idleCountdownInt = setInterval(function() {
-      idleCountdown--;
-      updateIdleCountdown(idleCountdown);
-      if (idleCountdown <= 0) {
-        clearInterval(idleCountdownInt);
-      }
-    }, 1000);
-  }, IDLE_TIMEOUT_MS - WARN_BEFORE_MS);
-
-  // Set logout timer
-  idleTimer = setTimeout(function() {
-    clearInterval(idleCountdownInt);
-    hideIdleWarning();
-    toast('Session expired due to inactivity. Please log in again.', 'warn');
-    setTimeout(doLogout, 800);
-  }, IDLE_TIMEOUT_MS);
+function stayLoggedIn() {
+  _lastActivity = Date.now();
+  _hideBannerNow();
+  toast('Session extended ✓', 'success');
 }
 
 function injectIdleWarningBanner() {
-  if (document.getElementById('idle-warning-banner')) return;
+  if (document.getElementById('idle-warning-banner')) {
+    idleWarnEl = document.getElementById('idle-warning-banner'); return;
+  }
   var el = document.createElement('div');
   el.id = 'idle-warning-banner';
   el.innerHTML =
@@ -2955,43 +3221,39 @@ function injectIdleWarningBanner() {
     + '<path d="M8 5v3.5l2 2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>'
     + '</svg>'
     + '<span>Session expiring in <b id="idle-countdown-num">60</b>s due to inactivity.</span>'
-    + '<button onclick="resetIdleTimer()" style="margin-left:10px;padding:4px 12px;border-radius:6px;'
-    + 'background:#fff;color:#92400e;border:1.5px solid #fbbf24;font-size:11px;font-weight:700;cursor:pointer;">'
-    + 'Stay Logged In</button>';
-  el.style.cssText =
-    'display:none;position:fixed;bottom:0;left:0;right:0;z-index:9999;'
-    + 'background:#fffbeb;border-top:2px solid #f59e0b;color:#92400e;'
-    + 'padding:12px 20px;font-size:13px;font-weight:600;font-family:var(--sans);'
-    + 'align-items:center;gap:8px;box-shadow:0 -4px 16px rgba(245,158,11,.2);';
+    + '<button onclick="event.stopPropagation();stayLoggedIn();" style="margin-left:10px;padding:4px 14px;'
+    + 'border-radius:6px;background:#fff;color:#92400e;border:1.5px solid #fbbf24;'
+    + 'font-size:11px;font-weight:700;cursor:pointer;">Stay Logged In</button>';
+  el.style.cssText = 'display:none;position:fixed;bottom:0;left:0;right:0;z-index:9999;'
+    + 'background:#fffbeb;border-top:2px solid #f59e0b;color:#92400e;padding:12px 20px;'
+    + 'font-size:13px;font-weight:600;font-family:var(--sans);align-items:center;gap:8px;'
+    + 'box-shadow:0 -4px 16px rgba(245,158,11,.2);';
   document.body.appendChild(el);
   idleWarnEl = el;
 }
 
-function showIdleWarning(secs) {
+function _showBannerNow(secs) {
   if (!idleWarnEl) injectIdleWarningBanner();
-  var num = document.getElementById('idle-countdown-num');
-  if (num) num.textContent = secs;
   idleWarnEl.style.display = 'flex';
-}
-
-function updateIdleCountdown(secs) {
   var num = document.getElementById('idle-countdown-num');
   if (num) num.textContent = Math.max(0, secs);
 }
 
-function hideIdleWarning() {
+function _hideBannerNow() {
   if (idleWarnEl) idleWarnEl.style.display = 'none';
 }
 
-function setIdleTimeout(minutes) {
-  IDLE_TIMEOUT_MS = minutes * 60 * 1000;
-  if (currentUser) resetIdleTimer();
-}
+// Legacy shims
+function resetIdleTimer()      { _lastActivity = Date.now(); }
+function hideIdleWarning()     { _hideBannerNow(); }
+function showIdleWarning()     {}
+function updateIdleCountdown() {}
+function setIdleTimeout(m)     { IDLE_TIMEOUT_MS = m*60000; WARN_BEFORE_MS = Math.min(60000,Math.max(10000,Math.floor(IDLE_TIMEOUT_MS/2))); }
+
 
 function doLogout() {
   stopIdleWatcher();
   currentUser = null;
-  sessionStorage.removeItem('hd_session');
   document.getElementById('login-screen').classList.add('visible');
   document.getElementById('login-username').value = '';
   document.getElementById('login-password').value = '';
@@ -3063,6 +3325,8 @@ function applyRoleUI() {
     // update My Tickets badge
     updateMyTicketsBadge();
     syncMasterToDropdowns();  // populate inst/dept/model/serial dropdowns for new ticket form
+    updateSidebarStats();     // re-calculate with user scope now that currentUser is set
+    updateNavCount();
     goView('mytickets');
     startIdleWatcher();
   } else {
@@ -3071,6 +3335,8 @@ function applyRoleUI() {
     refreshEmailStatusRow();
     goView('new');
     syncMasterToDropdowns();  // populate model/serial/dept/inst dropdowns
+    updateSidebarStats();     // re-calculate with admin scope
+    updateNavCount();
     startIdleWatcher();
   }
 }
@@ -3110,11 +3376,17 @@ function updateTid() {
   if (formTid) formTid.textContent = currentTid;
 }
 function updateNavCount() {
-  setEl('nav-count', tickets.length);
+  var count = (currentUser && currentUser.role !== 'admin')
+    ? tickets.filter(function(t){ return t.submittedBy === currentUser.username; }).length
+    : tickets.length;
+  setEl('nav-count', count);
 }
 function updateSidebarStats() {
-  var open = tickets.filter(function(t){ return t.status !== 'Closed'; }).length;
-  var resolved = tickets.filter(function(t){ return t.status === 'Closed'; }).length;
+  var userTickets = (currentUser && currentUser.role !== 'admin')
+    ? tickets.filter(function(t){ return t.submittedBy === currentUser.username; })
+    : tickets;
+  var open     = userTickets.filter(function(t){ return t.status !== 'Closed'; }).length;
+  var resolved = userTickets.filter(function(t){ return t.status === 'Closed'; }).length;
   setEl('ss-open', open);
   setEl('ss-resolved', resolved);
 }
@@ -3134,7 +3406,7 @@ function updateClock() {
 // ═══════════════════════════════════════════════════════════════
 function goView(v) {
   currentView = v;
-  ['new','list','dashboard','mytickets','users','master','reports'].forEach(function(name) {
+  ['new','list','dashboard','mytickets','users','master','reports','settings'].forEach(function(name) {
     var view = document.getElementById('view-'+name);
     var nav  = document.getElementById('nav-'+name);
     if (view) view.className = 'view' + (name===v ? ' active' : '');
@@ -3143,7 +3415,7 @@ function goView(v) {
       nav.className = 'nav-btn ' + base + (name===v ? ' active' : '');
     }
   });
-  var titles = { new:'New Hardware Ticket', list:'All Tickets', dashboard:'Dashboard', mytickets:'My Tickets', users:'Users', master:'Master Data', reports:'Reports' };
+  var titles = { new:'New Hardware Ticket', list:'All Tickets', dashboard:'Dashboard', mytickets:'My Tickets', users:'Users', master:'Master Data', reports:'Reports', settings:'Settings' };
   var title = titles[v] || v;
   if (v === 'list') title = 'All Tickets (' + tickets.length + ')';
   setEl('topbar-title', title);
@@ -3161,6 +3433,7 @@ function goView(v) {
   if (v === 'callers')   { renderCallerList(); callerFormNew(); }
   if (v === 'reports')   initReportView();
   if (v === 'new')       syncMasterToDropdowns();
+  if (v === 'settings')  { renderSettings(); setEl('topbar-title', 'Settings'); }
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -3523,7 +3796,12 @@ function renderList() {
   var resetBtn = document.getElementById('btn-reset-filters');
   if (resetBtn) resetBtn.style.display = hasFilters ? '' : 'none';
 
-  var filtered = tickets.filter(function(t) {
+  // Non-admin users only see their own tickets
+  var baseTickets = (currentUser && currentUser.role !== 'admin')
+    ? tickets.filter(function(t){ return t.submittedBy === currentUser.username; })
+    : tickets;
+
+  var filtered = baseTickets.filter(function(t) {
     var qMatch  = !q   || [t.id,t.name,t.device,t.cats,t.dept,t.asset,t.tech,t.email,t.phone,t.institution].join(' ').toLowerCase().includes(q);
     var sMatch  = !sf  || t.status === sf;
     var pMatch  = !pf  || t.priority === pf;
@@ -3533,14 +3811,16 @@ function renderList() {
     return qMatch && sMatch && pMatch && dMatch && tMatch && inMatch;
   });
 
-  // Update topbar title with total ticket count
-  if (currentView === 'list') setEl('topbar-title', 'All Tickets (' + tickets.length + ')');
+  // Update topbar title with scoped ticket count
+  if (currentView === 'list') setEl('topbar-title', 'All Tickets (' + baseTickets.length + ')');
 
   var countEl = document.getElementById('asp-result-count');
   if (countEl) countEl.textContent = filtered.length + ' ticket' + (filtered.length !== 1 ? 's' : '');
 
   var printBtn = document.getElementById('btn-print-results');
   if (printBtn) printBtn.style.display = filtered.length > 0 ? '' : 'none';
+  var csvBtn = document.getElementById('btn-export-csv');
+  if (csvBtn) csvBtn.style.display = filtered.length > 0 ? '' : 'none';
 
   var chipsEl = document.getElementById('asp-chips');
   if (chipsEl) {
@@ -3657,6 +3937,291 @@ function printFilteredTickets() {
   setTimeout(function(){ w.print(); }, 400);
 }
 
+// ════════════════════════════════════════════
+//  FORGOT PASSWORD
+// ════════════════════════════════════════════
+function openForgotModal() {
+  var isAdminTab = (loginTab === 'admin');
+  document.getElementById('forgot-title').textContent   = isAdminTab ? '🔑 Admin Password Recovery' : '🔑 Forgot Password';
+  document.getElementById('forgot-sub').textContent     = isAdminTab
+    ? 'Use the master recovery key to reset the admin password.'
+    : 'Need help accessing your account?';
+  document.getElementById('forgot-user-section').style.display  = isAdminTab ? 'none' : '';
+  document.getElementById('forgot-admin-section').style.display = isAdminTab ? '' : 'none';
+  document.getElementById('forgot-ok-btn').style.display        = isAdminTab ? '' : 'none';
+  var keyInp = document.getElementById('forgot-recovery-key');
+  if (keyInp) keyInp.value = '';
+  document.getElementById('forgot-error').style.display = 'none';
+  document.getElementById('forgot-modal').classList.add('open');
+  if (isAdminTab && keyInp) setTimeout(function(){ keyInp.focus(); }, 80);
+}
+
+function closeForgotModal() {
+  document.getElementById('forgot-modal').classList.remove('open');
+}
+
+function getRecoveryKey() {
+  return localStorage.getItem('hd_recovery_key') || 'RESET-HARDDESK';
+}
+
+function doAdminReset() {
+  var key   = (document.getElementById('forgot-recovery-key').value || '').trim();
+  var errEl = document.getElementById('forgot-error');
+  errEl.style.display = 'none';
+
+  if (!key) {
+    errEl.textContent = 'Please enter the recovery key.';
+    errEl.style.display = 'block';
+    return;
+  }
+  if (key !== getRecoveryKey()) {
+    errEl.textContent = 'Incorrect recovery key. Please try again.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  // Reset admin password to default
+  USERS['admin'].password = 'admin123';
+  localStorage.removeItem('hd_admin_pwd');
+  if (db) {
+    db.collection('config').doc('admin_pwd').delete()
+      .catch(function(e){ console.warn('Admin pwd reset error:', e); });
+  }
+
+  closeForgotModal();
+  toast('✅ Admin password reset to default (admin123)', 'success');
+}
+
+// ── Settings panel ──
+function renderSettings() {
+  var inp = document.getElementById('settings-rkey-display');
+  if (inp) inp.value = getRecoveryKey();
+  var idleInp = document.getElementById('settings-idle-min');
+  if (idleInp) idleInp.value = Math.round(IDLE_TIMEOUT_MS / 60000);
+  // Show the effective warn-before time
+  var warnNote = document.getElementById('settings-idle-warn-note');
+  if (warnNote) warnNote.textContent = 'Warning banner appears ' + Math.round(WARN_BEFORE_MS / 1000) + 's before logout.';
+}
+
+function toggleRkeyVisibility() {
+  var inp = document.getElementById('settings-rkey-display');
+  if (!inp) return;
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+
+function saveRecoveryKey() {
+  var newKey  = (document.getElementById('settings-rkey-new').value || '').trim();
+  var confirm = (document.getElementById('settings-rkey-confirm').value || '').trim();
+  var errEl   = document.getElementById('settings-rkey-error');
+  errEl.style.display = 'none';
+
+  if (!newKey)           { errEl.textContent = 'Please enter a new recovery key.'; errEl.style.display = 'block'; return; }
+  if (newKey.length < 6) { errEl.textContent = 'Recovery key must be at least 6 characters.'; errEl.style.display = 'block'; return; }
+  if (newKey !== confirm) { errEl.textContent = 'Keys do not match. Please confirm the new key.'; errEl.style.display = 'block'; return; }
+
+  localStorage.setItem('hd_recovery_key', newKey);
+  if (db) {
+    db.collection('config').doc('recovery_key').set({ key: newKey })
+      .catch(function(e){ console.warn('Recovery key save error:', e); });
+  }
+
+  document.getElementById('settings-rkey-new').value     = '';
+  document.getElementById('settings-rkey-confirm').value = '';
+  document.getElementById('settings-rkey-display').value = newKey;
+  document.getElementById('settings-rkey-display').type  = 'password';
+  toast('✅ Recovery key updated successfully', 'success');
+}
+
+function saveIdleTimeout() {
+  var mins = parseInt(document.getElementById('settings-idle-min').value, 10);
+  if (isNaN(mins) || mins < 1) { toast('Enter a valid number of minutes (min 1)', 'warn'); return; }
+  IDLE_TIMEOUT_MS = mins * 60 * 1000;
+  WARN_BEFORE_MS  = Math.min(60000, Math.max(10000, Math.floor(IDLE_TIMEOUT_MS / 2)));
+  localStorage.setItem('hd_idle_timeout_ms', String(IDLE_TIMEOUT_MS));
+  // Reset the activity timestamp so the new timeout counts from now
+  _lastActivity = Date.now();
+  var warnNote = document.getElementById('settings-idle-warn-note');
+  if (warnNote) warnNote.textContent = 'Warning banner appears ' + Math.round(WARN_BEFORE_MS / 1000) + 's before logout.';
+  toast('✅ Idle timeout set to ' + mins + ' minute' + (mins !== 1 ? 's' : ''), 'success');
+}
+
+// Admin resets any user's password from the Users panel
+function adminResetUserPwd(username, displayName) {
+  var newPwd = prompt('Set new password for ' + displayName + ' (@' + username + '):\n(Leave blank to cancel)');
+  if (newPwd === null || newPwd.trim() === '') return;
+  newPwd = newPwd.trim();
+  if (newPwd.length < 4) { toast('Password must be at least 4 characters', 'warn'); return; }
+
+  if (!USERS[username]) { toast('User not found', 'error'); return; }
+  USERS[username].password = newPwd;
+
+  if (username === 'admin') {
+    localStorage.setItem('hd_admin_pwd', newPwd);
+    if (db) db.collection('config').doc('admin_pwd').set({ pwd: newPwd }).catch(function(){});
+  } else {
+    var saved = getSavedUsers();
+    if (saved[username]) { saved[username].password = newPwd; saveUsersToDB(saved); }
+  }
+
+  toast('✅ Password for ' + displayName + ' updated', 'success');
+}
+
+
+function exportCSV() {
+  var rows = window._lastFilteredTickets || [];
+  if (!rows.length) { toast('No tickets to export', 'warn'); return; }
+
+  var priMap = {p1:'P1 — Critical', p2:'P2 — High', p3:'P3 — Medium', p4:'P4 — Low'};
+  var headers = ['Ticket ID','Date','Caller Name','Phone','Email','Institution','Department',
+                 'Device','Model','Asset / Serial','Location','Warranty','Category',
+                 'Priority','Status','Technician','ETA','Description','Resolution','Resolution Time','Files'];
+
+  function csvCell(val) {
+    val = (val == null ? '' : String(val)).replace(/"/g, '""');
+    return '"' + val + '"';
+  }
+
+  var csvRows = [headers.map(csvCell).join(',')];
+  rows.forEach(function(t) {
+    var d = t.created ? new Date(t.created).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}) : '';
+    csvRows.push([
+      t.id, d, t.name, t.phone, t.email, t.institution, t.dept,
+      t.device, t.model, t.asset, t.loc, t.warranty, t.cats,
+      priMap[t.priority]||t.priority, t.status, t.tech||'Unassigned',
+      t.eta, t.desc, t.resolution, t.resolutionLabel, t.fileCount||0
+    ].map(csvCell).join(','));
+  });
+
+  var blob = new Blob(['\uFEFF' + csvRows.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'harddesk-tickets-' + new Date().toISOString().slice(0,10) + '.csv';
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a);
+  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 2000);
+  toast('✅ Exported ' + rows.length + ' ticket' + (rows.length !== 1 ? 's' : '') + ' to CSV', 'success');
+}
+
+// ════════════════════════════════════════════
+//  TECHNICIAN COMMENTS
+// ════════════════════════════════════════════
+function renderComments(t) {
+  var comments = t.comments || [];
+  var canPost   = currentUser && currentUser.role === 'admin';
+
+  var listHtml = comments.length
+    ? comments.map(function(c) {
+        var initials = (c.author||'?').split(' ').map(function(w){ return w[0]||''; }).join('').toUpperCase().slice(0,2);
+        var isAdmin  = c.role === 'admin';
+        return '<div class="comment-item">'
+          + '<div class="comment-avatar' + (isAdmin ? '' : ' ca-user') + '">' + initials + '</div>'
+          + '<div style="flex:1;min-width:0;">'
+          +   '<div class="comment-meta">'
+          +     '<span class="comment-author">' + escHtml(c.author) + '</span>'
+          +     '<span class="comment-ts">' + escHtml(c.ts||'') + '</span>'
+          +   '</div>'
+          +   '<div class="comment-text">' + escHtml(c.text) + '</div>'
+          + '</div></div>';
+      }).join('')
+    : '<div class="comments-empty">No updates yet.</div>';
+
+  var postHtml = canPost
+    ? '<div class="comment-post-row">'
+      + '<textarea id="comment-input-' + t.id + '" placeholder="Post a status update visible to the caller…" rows="2"></textarea>'
+      + '<button class="btn btn-accent btn-sm" onclick="postComment(\'' + escAttr(t.id) + '\')" style="white-space:nowrap;">'
+      +   '<svg fill="none" viewBox="0 0 14 14" width="12" height="12"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"></path></svg>'
+      +   ' Post'
+      + '</button></div>'
+    : '';
+
+  return '<div class="comments-section">' + listHtml + postHtml + '</div>';
+}
+
+function postComment(ticketId) {
+  var t = tickets.find(function(x){ return x.id === ticketId; });
+  if (!t) return;
+  var inp = document.getElementById('comment-input-' + ticketId);
+  if (!inp) return;
+  var text = (inp.value || '').trim();
+  if (!text) { toast('Please type a comment first', 'warn'); return; }
+
+  if (!t.comments) t.comments = [];
+  var comment = {
+    id:     Date.now(),
+    author: currentUser.displayName,
+    role:   currentUser.role,
+    text:   text,
+    ts:     new Date().toLocaleString('en-IN', {day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})
+  };
+  t.comments.push(comment);
+
+  if (db) {
+    db.collection('tickets').doc(t.id).set(t)
+      .catch(function(e){ toast('Comment save error: ' + e.message, 'error'); });
+  } else {
+    localStorage.setItem('hd_tickets', JSON.stringify(tickets));
+  }
+
+  inp.value = '';
+  renderDetailView(t);
+  toast('Comment posted', 'success');
+}
+
+// ════════════════════════════════════════════
+//  PASSWORD CHANGE
+// ════════════════════════════════════════════
+function openPwdModal() {
+  document.getElementById('pwd-current').value = '';
+  document.getElementById('pwd-new').value     = '';
+  document.getElementById('pwd-confirm').value = '';
+  document.getElementById('pwd-error').style.display = 'none';
+  document.getElementById('pwd-modal').classList.add('open');
+  setTimeout(function(){ document.getElementById('pwd-current').focus(); }, 80);
+}
+
+function closePwdModal() {
+  document.getElementById('pwd-modal').classList.remove('open');
+}
+
+function savePwd() {
+  var current  = document.getElementById('pwd-current').value;
+  var newPwd   = document.getElementById('pwd-new').value;
+  var confirm  = document.getElementById('pwd-confirm').value;
+  var errEl    = document.getElementById('pwd-error');
+
+  function showErr(msg) { errEl.textContent = msg; errEl.style.display = 'block'; }
+  errEl.style.display = 'none';
+
+  if (!current)  { showErr('Please enter your current password.'); return; }
+  if (!newPwd)   { showErr('Please enter a new password.'); return; }
+  if (newPwd.length < 4) { showErr('New password must be at least 4 characters.'); return; }
+  if (newPwd !== confirm) { showErr('New passwords do not match.'); return; }
+
+  // Verify current password
+  var u = USERS[currentUser.username];
+  if (!u || u.password !== current) { showErr('Current password is incorrect.'); return; }
+
+  // Update password in memory
+  USERS[currentUser.username].password = newPwd;
+
+  // Persist
+  if (currentUser.role === 'admin') {
+    // Admin password stored under its own key (never goes into hd_users)
+    localStorage.setItem('hd_admin_pwd', newPwd);
+    if (db) {
+      db.collection('config').doc('admin_pwd').set({ pwd: newPwd })
+        .catch(function(e){ console.warn('Admin pwd save error:', e); });
+    }
+  } else {
+    var saved = getSavedUsers();
+    if (saved[currentUser.username]) saved[currentUser.username].password = newPwd;
+    saveUsersToDB(saved);
+  }
+
+  closePwdModal();
+  toast('✅ Password updated successfully', 'success');
+}
+
 function clearChip(key) {
   if (key === 'q')   { var el = document.getElementById('search-inp'); if(el) el.value = ''; }
   if (key === 'sf')  { var el = document.getElementById('flt-status'); if(el) el.value = ''; }
@@ -3715,7 +4280,8 @@ function renderDetailView(t) {
     (t.resolution ? '<div class="detail-section"><div class="detail-section-title">Resolution</div><p style="font-size:13px;color:var(--ink2);line-height:1.7;">'+escHtml(t.resolution)+'</p></div>' : '')+
     (t.log && t.log.length ? '<div class="detail-section"><div class="detail-section-title">Activity Log</div><div class="log-wrap">'+
       t.log.map(function(e){ return '<div class="log-item"><div class="log-dot ld-'+e.type+'"></div><div class="log-who">'+e.who+'</div>&nbsp;<div class="log-act">'+e.act+'</div><div class="log-ts">'+e.ts+'</div></div>'; }).join('')+
-    '</div></div>' : '');
+    '</div></div>' : '')+
+    '<div class="detail-section"><div class="detail-section-title">Updates / Comments</div>'+renderComments(t)+'</div>';
 }
 
 function enterEditMode() {
@@ -4006,8 +4572,8 @@ function renderDashboard() {
   var techHtml = Object.keys(techs).sort(function(a,b){ return techs[b]-techs[a]; }).map(function(k){ return barItem(k, techs[k], total, 'var(--purple)'); }).join('');
   setHtml('dash-tech', techHtml || '<p style="color:var(--ink3);font-size:13px;">No data yet</p>');
 
-  var recentHtml = tickets.slice(0,8).map(function(t) {
   setEl('dash-recent-count', tickets.length);
+  var recentHtml = tickets.slice(0,8).map(function(t) {
     var priClass='pill-'+t.priority;
     var statClass={'Open':'pill-open','In Progress':'pill-inprog','Pending Parts':'pill-pending','Closed':'pill-resolved'}[t.status]||'pill-open';
     var d=t.created?new Date(t.created).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}):'—';
@@ -4164,6 +4730,23 @@ function loadCallers() {
   } else {
     try { callers = JSON.parse(localStorage.getItem('hd_callers') || '[]'); } catch(e) { callers = []; }
   }
+  // Migrate: resolve any raw dept/institution IDs stored as values to their labels
+  migrateClearCallerIds();
+}
+
+function migrateClearCallerIds() {
+  var changed = false;
+  callers.forEach(function(c) {
+    if (c.dept && c.dept.indexOf('-') !== -1 && !c.dept.includes('@')) {
+      var found = masterData.dept.find(function(x){ return x.id === c.dept; });
+      if (found) { c.dept = found.value; changed = true; }
+    }
+    if (c.institution && c.institution.indexOf('inst-') === 0) {
+      var found = masterData.inst.find(function(x){ return x.id === c.institution; });
+      if (found) { c.institution = found.value; changed = true; }
+    }
+  });
+  if (changed) saveCallers();
 }
 
 function saveCallers() {
@@ -4551,6 +5134,10 @@ function renderUsersList() {
       +   '<div class="user-row-meta">@' + escHtml(u.username) + '</div>'
       + '</div>'
       + '<span class="user-row-role ' + (isAdmin ? 'urr-admin' : 'urr-user') + '">' + u.role.toUpperCase() + '</span>'
+      + '<button class="btn-reset-pwd" title="Reset password" onclick="adminResetUserPwd(\'' + escAttr(u.username) + '\',\'' + escAttr(u.displayName) + '\')">'
+      +   '<svg fill="none" viewBox="0 0 14 14" width="11" height="11"><rect x="3" y="6" width="8" height="7" rx="1.2" stroke="currentColor" stroke-width="1.3"></rect><path d="M5 6V4.5a2 2 0 014 0V6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"></path></svg>'
+      +   ' Reset'
+      + '</button>'
       + delBtn
       + '</div>';
   }).join('');
@@ -4717,12 +5304,26 @@ function sendTicketEmail(ticket, type) {
     );
   }
 
+  // 3 — On closure, send to institution email if set in master data
+  if (type === 'closed' && ticket.institution) {
+    var instObj = masterData.inst.find(function(x){ return x.value === ticket.institution; });
+    if (instObj && instObj.email && instObj.email.indexOf('@') !== -1) {
+      sends.push(
+        emailjs.send(ejsConfig.service, ejsConfig.template, buildParams(instObj.email, ticket.institution))
+      );
+    }
+  }
+
   if (!sends.length) return;
 
   var verb = type === 'closed' ? 'Closure' : type === 'status_update' ? 'Status update' : 'Confirmation';
   Promise.all(sends)
     .then(function() {
-      var dest = ticket.email ? ticket.email + ' & admin' : 'admin';
+      var instObj = (type === 'closed' && ticket.institution)
+        ? masterData.inst.find(function(x){ return x.value === ticket.institution; })
+        : null;
+      var instNote = (instObj && instObj.email) ? ' + ' + ticket.institution : '';
+      var dest = ticket.email ? ticket.email + ' & admin' + instNote : 'admin' + instNote;
       toast(verb + ' email sent → ' + dest, 'success');
     })
     .catch(function(err) {
@@ -4735,6 +5336,14 @@ function sendTicketEmail(ticket, type) {
 //  FIREBASE SETUP & REAL-TIME LISTENERS
 // ═══════════════════════════════════════════════════════════════
 function initFirebase(cfg) {
+  // Guard: Firebase SDK scripts may fail to load (offline, CSP block, CDN error)
+  if (typeof firebase === 'undefined') {
+    console.warn('Firebase SDK did not load — falling back to local storage mode.');
+    db = null;
+    updateDbStatusUI(false);
+    toast('Firebase SDK unavailable — running in local storage mode', 'warn');
+    return;
+  }
   try {
     // If already initialized with same project, reuse; otherwise delete and reinit
     var existingApps = firebase.apps;
@@ -4756,6 +5365,7 @@ function initFirebase(cfg) {
 
 function doFirebaseInit(cfg) {
   try {
+    if (typeof firebase === 'undefined') { throw new Error('Firebase SDK not loaded'); }
     var app = firebase.apps.length ? firebase.app() : firebase.initializeApp(cfg);
     db = firebase.firestore();
     // Enable offline persistence for better reliability
@@ -4763,7 +5373,7 @@ function doFirebaseInit(cfg) {
       .catch(function(e){ console.warn('Persistence:', e.code); });
     attachFirestoreListeners();
     updateDbStatusUI(true);
-    toast('🔥 Firebase connected — real-time sync active', 'success');
+    // Status is shown in the topbar db-status-pill — no toast needed here
     console.log('Firebase connected:', cfg.projectId);
   } catch(e) {
     console.error('Firebase doInit error:', e);
@@ -4803,6 +5413,7 @@ function attachFirestoreListeners() {
       callers = [];
       snap.forEach(function(doc){ callers.push(doc.data()); });
       callers.sort(function(a,b){ return (b.createdAt||'').localeCompare(a.createdAt||''); });
+      migrateClearCallerIds();
       updateCallersNavBadge();
       if (currentView === 'callers') renderCallerList();
     }, function(err){
@@ -4827,6 +5438,21 @@ function attachFirestoreListeners() {
       console.error('Users listener error:', err);
     });
   fbUnsubscribers.push(unsubUsers);
+
+  // ── Admin password (stored separately, never in hd_users) ──
+  db.collection('config').doc('admin_pwd').get().then(function(doc) {
+    if (doc.exists && doc.data() && doc.data().pwd) {
+      USERS['admin'].password = doc.data().pwd;
+      localStorage.setItem('hd_admin_pwd', doc.data().pwd);
+    }
+  }).catch(function(e){ console.warn('Admin pwd load error:', e); });
+
+  // ── Recovery key ──
+  db.collection('config').doc('recovery_key').get().then(function(doc) {
+    if (doc.exists && doc.data() && doc.data().key) {
+      localStorage.setItem('hd_recovery_key', doc.data().key);
+    }
+  }).catch(function(e){ console.warn('Recovery key load error:', e); });
 
   // ── Master Data ──
   var unsubMaster = db.collection('config').doc('masterData')
@@ -4857,11 +5483,11 @@ function updateDbStatusUI(connected) {
   if (!pill) return;
   if (connected) {
     pill.className = 'db-status-pill cloud';
-    label.textContent = 'Cloud';
+    if (label) label.textContent = 'Firebase sync active';
     if (btn) btn.classList.add('connected');
   } else {
     pill.className = 'db-status-pill local';
-    label.textContent = 'Local';
+    if (label) label.textContent = 'Local storage only';
     if (btn) btn.classList.remove('connected');
   }
   // Also update modal status row if open
@@ -5271,13 +5897,15 @@ function syncMasterToDropdowns() {
     el.value = cur;
   }
 
-  // Institution
-  ['f-institution','cf-institution'].forEach(function(id){ setSelect(id, masterData.inst, 'Select institution…'); });
+  // Institution — ticket form uses label as value; caller form must match
+  setSelect('f-institution', masterData.inst, 'Select institution…');
+  setSelect('cf-institution', masterData.inst.map(function(x){ return {id:x.value,value:x.value}; }), 'Select institution…');
   setSelect('flt-inst',  masterData.inst.map(function(x){ return {id:x.value,value:x.value}; }), 'All Institutions');
   setSelect('rpt-inst',  masterData.inst.map(function(x){ return {id:x.value,value:x.value}; }), 'All Institutions');
 
-  // Department
-  ['f-dept','cf-dept'].forEach(function(id){ setSelect(id, masterData.dept, 'Select department…'); });
+  // Department — same fix: store label not ID
+  setSelect('f-dept', masterData.dept, 'Select department…');
+  setSelect('cf-dept', masterData.dept.map(function(x){ return {id:x.value,value:x.value}; }), 'Select department…');
   setSelect('flt-dept',  masterData.dept.map(function(x){ return {id:x.value,value:x.value}; }), 'All Depts');
   setSelect('rpt-dept',  masterData.dept.map(function(x){ return {id:x.value,value:x.value}; }), 'All Departments');
 
@@ -5287,10 +5915,10 @@ function syncMasterToDropdowns() {
   // Fix: f-tech uses plain values not ids
   var fTech = document.getElementById('f-tech');
   if (fTech) {
-    var cur = fTech.value;
+    var curTech = fTech.value;
     fTech.innerHTML = '<option value="">Unassigned</option>'
       + masterData.tech.map(function(x){ return '<option>'+escHtml(x.value)+'</option>'; }).join('');
-    fTech.value = cur;
+    fTech.value = curTech;
   }
   setSelect('rpt-tech',  masterData.tech.map(function(x){ return {id:x.value,value:x.value}; }), 'All Technicians');
   setSelect('flt-tech',  masterData.tech.map(function(x){ return {id:x.value,value:x.value}; }), 'All Technicians');
@@ -5298,38 +5926,38 @@ function syncMasterToDropdowns() {
   // Device Type
   var fDevice = document.getElementById('f-device');
   if (fDevice) {
-    var cur = fDevice.value;
+    var curDevice = fDevice.value;
     fDevice.innerHTML = '<option value="">Select device type…</option>'
       + masterData.device.map(function(x){ return '<option>'+escHtml(x.value)+'</option>'; }).join('');
-    fDevice.value = cur;
+    fDevice.value = curDevice;
   }
 
   // Make / Model
   var fModel = document.getElementById('f-model');
   if (fModel) {
-    var cur = fModel.value;
+    var curModel = fModel.value;
     fModel.innerHTML = '<option value="">Select make / model…</option>'
       + masterData.model.map(function(x){ return '<option value="'+escAttr(x.id)+'">'+escHtml(x.value)+'</option>'; }).join('');
-    fModel.value = cur;
+    fModel.value = curModel;
     onModelChange();
   }
 
   // Serial model selector in master panel
   var smSel = document.getElementById('serial-model-sel');
   if (smSel) {
-    var cur = smSel.value;
+    var curSmSel = smSel.value;
     smSel.innerHTML = '<option value="">— Select a Model first —</option>'
       + masterData.model.map(function(x){ return '<option value="'+escAttr(x.id)+'">'+escHtml(x.value)+'</option>'; }).join('');
-    smSel.value = cur;
+    smSel.value = curSmSel;
   }
 
   // Serial model selector in bulk modal
   var mbSel = document.getElementById('mbulk-model-sel');
   if (mbSel) {
-    var cur = mbSel.value;
+    var curMbSel = mbSel.value;
     mbSel.innerHTML = '<option value="">— Choose a model —</option>'
       + masterData.model.map(function(x){ return '<option value="'+escAttr(x.id)+'">'+escHtml(x.value)+'</option>'; }).join('');
-    mbSel.value = cur;
+    mbSel.value = curMbSel;
   }
 
   updateSerialCount();
@@ -5451,11 +6079,18 @@ function renderMasterList(type) {
   listEl.innerHTML = items.map(function(item) {
     var initials  = (item.value||'?').slice(0,2).toUpperCase();
     var isEditing = masterEditingId[type] === item.id;
+    var emailBadge = (type === 'inst' && item.email && !isEditing)
+      ? '<span style="font-size:10px;color:var(--ink3);font-family:var(--mono);margin-left:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:180px;" title="'+escAttr(item.email)+'">'+escHtml(item.email)+'</span>'
+      : '';
+    var editExtra = (type === 'inst' && isEditing)
+      ? '<input class="master-item-edit-input" id="medit-inst-email-'+item.id+'" value="'+escAttr(item.email||'')+'" placeholder="Email…" style="margin-left:4px;max-width:180px;" />'
+      : '';
     return '<div class="master-item'+(isEditing?' editing':'')+'" id="mitem-'+type+'-'+item.id+'">'
       + '<div class="master-item-icon">'+initials+'</div>'
       + (isEditing
           ? '<input class="master-item-edit-input" id="medit-'+type+'-'+item.id+'" value="'+escAttr(item.value)+'" onkeydown="if(event.key===\'Enter\')saveMasterEdit(\''+type+'\',\''+item.id+'\');if(event.key===\'Escape\')cancelMasterEdit(\''+type+'\')" />'
-          : '<span class="master-item-name" title="'+escAttr(item.value)+'">'+escHtml(item.value)+'</span>')
+            + editExtra
+          : '<span class="master-item-name" title="'+escAttr(item.value)+'">'+escHtml(item.value)+'</span>' + emailBadge)
       + '<div class="master-actions">'
       + (isEditing
           ? '<button class="master-btn save" onclick="saveMasterEdit(\''+type+'\',\''+item.id+'\')">'
@@ -5480,7 +6115,14 @@ function addMasterItem(type) {
   if (!val) { inp.focus(); return; }
   var dup = masterData[type].some(function(x){ return x.value.toLowerCase() === val.toLowerCase(); });
   if (dup) { toast('"'+val+'" already exists', 'warn'); return; }
-  masterData[type].push({ id: type+'-'+Date.now(), value: val });
+  var newItem = { id: type+'-'+Date.now(), value: val };
+  if (type === 'inst') {
+    var emailInp = document.getElementById('inst-email-input');
+    var emailVal = emailInp ? (emailInp.value || '').trim() : '';
+    if (emailVal) newItem.email = emailVal;
+    if (emailInp) emailInp.value = '';
+  }
+  masterData[type].push(newItem);
   saveMasterData(); inp.value = ''; renderMasterList(type);
   toast('"'+val+'" added', 'success');
 }
@@ -5502,7 +6144,13 @@ function saveMasterEdit(type, id) {
   var dup = masterData[type].some(function(x){ return x.id !== id && x.value.toLowerCase() === val.toLowerCase(); });
   if (dup) { toast('"'+val+'" already exists', 'warn'); return; }
   var item = masterData[type].find(function(x){ return x.id === id; });
-  if (item) item.value = val;
+  if (item) {
+    item.value = val;
+    if (type === 'inst') {
+      var emailInp = document.getElementById('medit-inst-email-'+id);
+      item.email = emailInp ? (emailInp.value || '').trim() : (item.email || '');
+    }
+  }
   masterEditingId[type] = null;
   saveMasterData(); renderMasterList(type);
   toast('Updated to "'+val+'"', 'success');
@@ -5722,14 +6370,11 @@ function initReportView() {
     modelSel.innerHTML = '<option value="">All Models</option>'
       + masterData.model.map(function(x){ return '<option>'+escHtml(x.value)+'</option>'; }).join('');
   }
-  // Populate technician dropdown from ticket data
+  // Populate technician dropdown from master data (not ticket data — ensures all techs appear)
   var techSel = document.getElementById('rpt-tech');
   if (techSel) {
-    var techs = [];
-    tickets.forEach(function(t){ if (t.tech && techs.indexOf(t.tech) === -1) techs.push(t.tech); });
-    techs.sort();
     techSel.innerHTML = '<option value="">All Technicians</option>'
-      + techs.map(function(t){ return '<option>'+escHtml(t)+'</option>'; }).join('');
+      + masterData.tech.map(function(t){ return '<option>'+escHtml(t.value)+'</option>'; }).join('');
   }
   liveReportCount();
 }
@@ -5941,85 +6586,4 @@ function bakeAndDownload() {
     model:  masterData.model,
     serial: masterData.serial
   };
-  var injectedScript = '<script>var BAKED_DATA = ' + JSON.stringify(snapshot) + ';<\/script>';
-  var marker = '<!-- BAKED_DATA_INJECTION_POINT -->';
-
-  // Fetch the raw source HTML file
-  fetch(window.location.href, { cache: 'no-store' })
-    .then(function(r) {
-      if (!r.ok) throw new Error('fetch failed');
-      return r.text();
-    })
-    .then(function(src) {
-      if (src.indexOf(marker) === -1) {
-        toast('Marker not found — using DOM fallback', 'warn');
-        _bakeFromDOM(injectedScript, marker);
-        return;
-      }
-      var baked = src.replace(marker, injectedScript + '\n' + marker);
-      _downloadBakedFile(baked);
-    })
-    .catch(function() {
-      _bakeFromDOM(injectedScript, marker);
-    });
-}
-
-function _bakeFromDOM(injectedScript, marker) {
-  // Fallback: serialise current DOM (less reliable but works locally)
-  var src = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
-  var baked = src.indexOf(marker) !== -1
-    ? src.replace(marker, injectedScript + '\n' + marker)
-    : src.replace('</head>', injectedScript + '\n</head>');
-  _downloadBakedFile(baked);
-}
-
-function _downloadBakedFile(html) {
-  var blob = new Blob([html], { type: 'text/html;charset=utf-8' });
-  var a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'hw-ticket-system-deploy.html';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 2000);
-  toast('✅ Deploy file ready — rename to index.html and upload to Netlify!', 'success');
-}
-
-// ── Mobile sidebar toggle ──
-function toggleMobileSidebar() {
-  var sidebar  = document.querySelector('.sidebar');
-  var overlay  = document.getElementById('sidebar-overlay');
-  var isOpen   = sidebar.classList.contains('mobile-open');
-  if (isOpen) {
-    sidebar.classList.remove('mobile-open');
-    overlay.classList.remove('active');
-    document.body.style.overflow = '';
-  } else {
-    sidebar.classList.add('mobile-open');
-    overlay.classList.add('active');
-    document.body.style.overflow = 'hidden';
-  }
-}
-
-// Close sidebar when a nav item is clicked on mobile
-document.addEventListener('DOMContentLoaded', function() {
-  var navBtns = document.querySelectorAll('.nav-btn');
-  navBtns.forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      if (window.innerWidth <= 768) {
-        var sidebar = document.querySelector('.sidebar');
-        var overlay = document.getElementById('sidebar-overlay');
-        sidebar.classList.remove('mobile-open');
-        overlay.classList.remove('active');
-        document.body.style.overflow = '';
-      }
-    });
-  });
-});
-
-// ── Bootstrap ──
-init();
-</script>
-
-
-<div id="idle-warning-banner" style="display: none; position: fixed; bottom: 0px; left: 0px; right: 0px; z-index: 9999; background: rgb(255, 251, 235); border-top: 2px solid rgb(245, 158, 11); color: rgb(146, 64, 14); padding: 12px 20px; font-size: 13px; font-weight: 600; font-family: var(--sans); align-items: center; gap: 8px; box-shadow: rgba(245, 158, 11, 0.2) 0px -4px 16px;"><svg fill="none" viewBox="0 0 16 16" width="15" height="15" style="flex-shrink:0;"><circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.4"></circle><path d="M8 5v3.5l2 2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"></path></svg><span>Session expiring in <b id="idle-countdown-num">60</b>s due to inactivity.</span><button onclick="resetIdleTimer()" style="margin-left:10px;padding:4px 12px;border-radius:6px;background:#fff;color:#92400e;border:1.5px solid #fbbf24;font-size:11px;font-weight:700;cursor:pointer;">Stay Logged In</button></div></body></html>
+  var injectedScript = '</body></html>
