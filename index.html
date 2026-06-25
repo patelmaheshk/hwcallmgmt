@@ -219,10 +219,10 @@ body {
   padding: 0 22px; gap: 10px; flex-shrink: 0;
 }
 .topbar-title {
-  font-family: var(--serif);
-  font-size: 16px;
-  font-weight: 400;
-  font-style: italic;
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 600;
+  font-style: normal;
   flex: 1;
   color: var(--ink);
   letter-spacing: -.1px;
@@ -441,7 +441,7 @@ body {
 .log-ts { font-family: var(--mono); font-size: 9.5px; color: var(--ink3); white-space: nowrap; }
 
 /* ─── DASHBOARD ─── */
-.dash-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 18px; }
+.dash-stats { display: grid; grid-template-columns: repeat(6,1fr); gap: 12px; margin-bottom: 18px; }
 .ds-card {
   background: var(--surface); border: 1.5px solid var(--border);
   border-radius: var(--r-lg); padding: 18px; box-shadow: var(--shadow);
@@ -451,14 +451,25 @@ body {
 .ds-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
 .ds-card::before { content: ''; position: absolute; top: 0; left: 0; bottom: 0; width: 3px; }
 .ds-card::after { display: none; }
-.ds-card.c-total::before { background: var(--ink); }
-.ds-card.c-open::before  { background: var(--amber); }
+.ds-card.c-total::before    { background: var(--ink); }
+.ds-card.c-open::before     { background: var(--green); }
+.ds-card.c-inprog::before   { background: var(--blue); }
+.ds-card.c-pending::before  { background: var(--cyan); }
 .ds-card.c-resolved::before { background: var(--red); }
-.ds-card.c-crit::before  { background: var(--red); }
-.ds-val { font-family: var(--mono); font-size: 34px; font-weight: 400; letter-spacing: -.04em; line-height: 1; margin-bottom: 8px; }
+.ds-card.c-crit::before     { background: var(--red); }
+.ds-val { font-family: var(--mono); font-size: 30px; font-weight: 800; letter-spacing: -.04em; line-height: 1; margin-bottom: 8px; }
+.ds-card.c-total    .ds-val { color: var(--ink); }
+.ds-card.c-open     .ds-val { color: var(--green); }
+.ds-card.c-inprog   .ds-val { color: var(--blue); }
+.ds-card.c-pending  .ds-val { color: var(--cyan); }
+.ds-card.c-resolved .ds-val { color: var(--red); }
+.ds-card.c-crit     .ds-val { color: var(--red); }
+.ds-card.c-crit { background: var(--red-bg); border-color: #e9b0ac; }
+.ds-card.c-crit .ds-lbl { color: var(--red); }
+.ds-card.c-crit .ds-sub { color: #c0392b99; }
 .ds-lbl { font-family: var(--mono); font-size: 9.5px; text-transform: uppercase; letter-spacing: .12em; color: var(--ink3); font-weight: 500; }
 .ds-sub { font-size: 11.5px; color: var(--ink3); margin-top: 8px; }
-.dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+.dash-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 14px; margin-bottom: 14px; }
 .bar-row { display: flex; flex-direction: column; gap: 10px; }
 .bar-item { display: flex; flex-direction: column; gap: 5px; }
 .bar-head { display: flex; justify-content: space-between; font-size: 12px; }
@@ -492,23 +503,42 @@ body {
 .tkt-table td { padding: 12px 14px; border-bottom: 1px solid var(--border); vertical-align: middle; font-size: 13px; }
 .tkt-table tbody tr:last-child td { border-bottom: none; }
 .tkt-table tbody tr { transition: background .1s; cursor: pointer; }
+.tkt-table tbody tr:nth-child(even) { background: var(--accent3); }
 .tkt-table tbody tr:hover { background: var(--accent3); }
 .tkt-id-cell { font-family: var(--mono); font-size: 10.5px; color: var(--accent); font-weight: 500; }
 .tkt-name { font-weight: 700; color: var(--ink); }
 .tkt-sub { font-size: 11px; color: var(--ink3); margin-top: 2px; }
 .pill {
-  display: inline-flex; align-items: center; padding: 2px 9px; border-radius: 2px;
-  font-size: 10px; font-weight: 600; font-family: var(--mono);
+  display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 6px;
+  font-size: 10px; font-weight: 700; font-family: var(--mono);
   white-space: nowrap; letter-spacing: .05em;
+  border: 1.5px solid currentColor; background: transparent;
 }
-.pill-p1 { background: var(--red-bg); color: var(--red); }
-.pill-p2 { background: var(--amber-bg); color: var(--amber); }
-.pill-p3 { background: var(--blue-bg); color: var(--blue); }
-.pill-p4 { background: var(--green-bg); color: var(--green); }
-.pill-open { background: var(--blue-bg); color: var(--blue); }
-.pill-inprog { background: var(--purple-bg); color: var(--purple); }
-.pill-pending { background: var(--amber-bg); color: var(--amber); }
-.pill-resolved { background: var(--red-bg); color: var(--red); }
+/* Action-button style pills for the ticket list table */
+.tkt-table .pill {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 10px; border-radius: var(--r);
+  font-family: var(--sans); font-size: 11px; font-weight: 600;
+  cursor: default; border: 1.5px solid; white-space: nowrap;
+  letter-spacing: .01em; transition: none;
+}
+.pill-p1 { color: var(--red); }
+.pill-p2 { color: var(--amber); }
+.pill-p3 { color: var(--blue); }
+.pill-p4 { color: var(--green); }
+.pill-open    { color: var(--blue); }
+.pill-inprog  { color: var(--purple); }
+.pill-pending { color: var(--amber); }
+.pill-resolved{ color: var(--red); }
+/* Ticket table: solid filled button look matching action buttons */
+.tkt-table .pill-p1     { background: var(--red-bg);    border-color: #e9b0ac; color: var(--red); }
+.tkt-table .pill-p2     { background: var(--amber-bg);  border-color: #f5c97a; color: var(--amber); }
+.tkt-table .pill-p3     { background: var(--blue-bg);   border-color: #93b4f5; color: var(--blue); }
+.tkt-table .pill-p4     { background: var(--green-bg);  border-color: #8ecec8; color: var(--green); }
+.tkt-table .pill-open   { background: var(--blue-bg);   border-color: #93b4f5; color: var(--blue); }
+.tkt-table .pill-inprog { background: var(--purple-bg); border-color: #c4b0f5; color: var(--purple); }
+.tkt-table .pill-pending{ background: var(--amber-bg);  border-color: #f5c97a; color: var(--amber); }
+.tkt-table .pill-resolved{ background: var(--red-bg);   border-color: #e9b0ac; color: var(--red); }
 .empty-state { text-align: center; padding: 60px 20px; color: var(--ink3); }
 .empty-state svg { width: 36px; height: 36px; margin-bottom: 12px; opacity: .3; }
 .empty-state p { font-size: 14px; font-weight: 500; }
@@ -549,19 +579,69 @@ body {
 
 /* ─── EDIT MODE ─── */
 .edit-field-wrap { margin-bottom: 0; }
-.edit-input, .edit-select, .edit-textarea { width: 100%; background: var(--surface); border: 1.5px solid var(--accent); border-radius: var(--r); padding: 7px 11px; font-size: 13px; color: var(--ink); font-family: var(--sans); outline: none; box-shadow: 0 0 0 3px rgba(13,122,107,.1); }
-.edit-select { -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%238a837a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px; }
-.edit-textarea { resize: vertical; min-height: 72px; line-height: 1.6; }
-.detail-edit-bar { display: none; align-items: center; gap: 8px; padding: 10px 20px; background: var(--accent3); border-bottom: 1.5px solid #8ecec8; font-size: 12.5px; color: var(--accent); font-weight: 600; font-family: var(--mono); letter-spacing: .02em; }
+/* ─── EDIT MODE ─── */
+.edit-input, .edit-select, .edit-textarea {
+  width: 100%; background: var(--bg);
+  border: 1.5px solid var(--border2);
+  border-radius: var(--r); padding: 8px 12px;
+  font-size: 13px; color: var(--ink); font-family: var(--sans); outline: none;
+  transition: border-color .14s, box-shadow .14s;
+}
+.edit-input:focus, .edit-select:focus, .edit-textarea:focus {
+  border-color: var(--accent); box-shadow: 0 0 0 3px rgba(13,122,107,.12);
+  background: var(--surface);
+}
+.edit-select {
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%238a837a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px;
+}
+.edit-textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
+.edit-field { margin-bottom: 14px; }
+.edit-field:last-child { margin-bottom: 0; }
+.edit-label {
+  display: block; margin-bottom: 5px;
+  font-family: var(--mono); font-size: 9.5px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .1em; color: var(--ink3);
+}
+.edit-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.edit-section {
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: var(--r-lg); padding: 16px; margin-bottom: 14px;
+}
+.edit-section-title {
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .1em; color: var(--ink3); margin-bottom: 14px;
+  padding-bottom: 10px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 6px;
+}
+.detail-edit-bar {
+  display: none; align-items: center; gap: 8px;
+  padding: 10px 16px;
+  background: var(--ink); border-bottom: 2px solid var(--accent);
+  font-size: 12px; color: rgba(255,255,255,.7); font-weight: 500;
+}
 .detail-edit-bar.visible { display: flex; }
 .edit-pri-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; }
-.edit-pri-opt { border: 1.5px solid var(--border); border-radius: var(--r); padding: 7px 4px; text-align: center; cursor: pointer; font-family: var(--mono); font-size: 13px; font-weight: 500; color: var(--ink3); background: var(--surface); transition: all .14s; }
+.edit-pri-opt {
+  border: 1.5px solid var(--border2); border-radius: var(--r);
+  padding: 8px 4px; text-align: center; cursor: pointer;
+  font-family: var(--mono); font-size: 12px; font-weight: 700;
+  color: var(--ink3); background: var(--bg); transition: all .14s;
+}
+.edit-pri-opt:hover { border-color: var(--ink3); color: var(--ink); }
 .edit-pri-opt.sel-p1 { background: var(--red-bg); border-color: var(--red); color: var(--red); }
 .edit-pri-opt.sel-p2 { background: var(--amber-bg); border-color: var(--amber); color: var(--amber); }
 .edit-pri-opt.sel-p3 { background: var(--blue-bg); border-color: var(--blue); color: var(--blue); }
 .edit-pri-opt.sel-p4 { background: var(--green-bg); border-color: var(--green); color: var(--green); }
-.edit-stat-row { display: flex; gap: 5px; flex-wrap: wrap; }
-.edit-stat-opt { padding: 5px 13px; border-radius: 2px; border: 1.5px solid var(--border); font-size: 12px; font-weight: 600; cursor: pointer; color: var(--ink3); background: var(--surface); transition: all .14s; font-family: var(--sans); }
+.edit-stat-row { display: flex; gap: 6px; flex-wrap: wrap; }
+.edit-stat-opt {
+  padding: 6px 14px; border-radius: 20px;
+  border: 1.5px solid var(--border2);
+  font-size: 12px; font-weight: 600; cursor: pointer;
+  color: var(--ink3); background: var(--bg); transition: all .14s;
+}
+.edit-stat-opt:hover { border-color: var(--ink); color: var(--ink); }
 .edit-stat-opt.sel { background: var(--ink); color: #fff; border-color: var(--ink); }
 
 /* ─── MY TICKETS ─── */
@@ -583,11 +663,11 @@ body {
 .mtc-meta { font-size: 11.5px; color: var(--ink3); display: flex; gap: 10px; flex-wrap: wrap; }
 .mtc-meta-item { display: flex; align-items: center; gap: 4px; }
 .mtc-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
-.mtc-status-badge { font-size: 10px; font-weight: 600; padding: 3px 9px; border-radius: 2px; white-space: nowrap; font-family: var(--mono); letter-spacing: .04em; }
-.msb-open     { background: var(--amber-bg); color: var(--amber); }
-.msb-progress { background: var(--blue-bg);  color: var(--blue); }
-.msb-pending  { background: var(--purple-bg);color: var(--purple); }
-.msb-resolved { background: var(--red-bg); color: var(--red); }
+.mtc-status-badge { font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 6px; white-space: nowrap; font-family: var(--mono); letter-spacing: .04em; border: 1.5px solid currentColor; background: transparent; }
+.msb-open     { color: var(--amber); }
+.msb-progress { color: var(--blue); }
+.msb-pending  { color: var(--purple); }
+.msb-resolved { color: var(--red); }
 .mtc-date { font-family: var(--mono); font-size: 10px; color: var(--ink3); }
 .mtc-update-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); flex-shrink: 0; margin-top: 2px; }
 .my-tickets-empty { text-align: center; padding: 60px 20px; color: var(--ink3); }
@@ -1549,7 +1629,7 @@ body {
 <body>
 
 <!-- ══════════════════ LOGIN SCREEN ══════════════════ -->
-<div class="login-screen" id="login-screen">
+<div class="login-screen visible" id="login-screen">
   <div class="login-grid"></div>
   <div class="login-card">
     <div class="login-logo">
@@ -1582,7 +1662,7 @@ body {
   </div>
 </div>
 
-<div class="app">
+<div class="app" id="app-shell" style="display:none;">
 
   <!-- Mobile sidebar overlay -->
   <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleMobileSidebar()"></div>
@@ -1742,11 +1822,11 @@ Mon, 18 May, 2026</div>
 
                 <div class="fg2">
                   <div class="field"><label class="field-label">Full Name <span class="req">*</span></label><input type="text" id="f-name" placeholder="e.g. Ravi Sharma" value="Mahesh Patel"></div>
-                  <div class="field"><label class="field-label">Contact Number</label><input type="text" id="f-phone" placeholder="+91 98765 43210" value="9904148624"></div>
+                  <div class="field"><label class="field-label">Contact Number <span class="req">*</span></label><input type="text" id="f-phone" placeholder="+91 98765 43210" value="9904148624"></div>
                 </div>
                 <div class="fg2">
-                  <div class="field"><label class="field-label">Email Address</label><input type="email" id="f-email" placeholder="ravi@company.com" value="patelmaheshk@rediffmail.com"></div>
-                  <div class="field"><label class="field-label">Institution</label>
+                  <div class="field"><label class="field-label">Email Address <span class="req">*</span></label><input type="email" id="f-email" placeholder="ravi@company.com" value="patelmaheshk@rediffmail.com"></div>
+                  <div class="field"><label class="field-label">Institution <span class="req">*</span></label>
                     <select id="f-institution"><option value="">Select institution…</option><option value="inst-0">GD MODI COLLEGE OF ARTS</option><option value="inst-1">RR MEHTA COLLEGE OF SCIENCE AND CL PARIKH COLLEGE OF COMMERCE</option><option value="inst-2">BK MERCANTILE LAW COLLEGE</option><option value="inst-1778652627552">BK MEHTA IT CENTRE BCA COLLEGE</option><option value="inst-1778652636856">BL PARIKH COLLEGE OF BBA</option><option value="inst-1778652653696">MA PARIKH FINEARTS AND ARTS COLLEGE</option><option value="inst-1778652680441">BKDKM COLLEGE OF PROFESSIONAL STUDIES</option><option value="inst-1778653022184">BANASKANTHA DISTRICT KELAVANI MANDAL</option><option value="inst-1778653035960">RADIO PALANPUR 90.4 FM</option></select>
                   </div>
                 </div>
@@ -1900,11 +1980,11 @@ Mon, 18 May, 2026</div>
               </div>
             </div>
 
-            <!-- Technician -->
-            <div class="card">
+            <!-- Technician Assignment -->
+            <div class="card" id="technician-card">
               <div class="card-head">
                 <div class="card-head-icon"><svg fill="none" viewBox="0 0 14 14"><circle cx="5" cy="4.5" r="2" stroke="currentColor" stroke-width="1.3"></circle><path d="M1 13c0-2 1.8-3.5 4-3.5s4 1.5 4 3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"></path><path d="M10 8l1.5 1.5L13 8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"></path><path d="M11.5 9.5V7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"></path></svg></div>
-                <span class="card-head-title">Assignment</span>
+                <span class="card-head-title">Technician Assignment</span>
               </div>
               <div class="card-body">
                 <div class="field"><label class="field-label">Assigned Technician</label>
@@ -2106,7 +2186,7 @@ Mon, 18 May, 2026</div>
           <div style="display:flex;gap:8px;margin-left:auto;align-items:center;">
             <div class="search-box">
               <svg fill="none" viewBox="0 0 14 14"><circle cx="6" cy="6" r="4" stroke="currentColor" stroke-width="1.3"></circle><path d="M9.5 9.5l3 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"></path></svg>
-              <input type="text" id="caller-search" placeholder="Search users…" oninput="renderCallerList()">
+              <input type="text" id="caller-search" placeholder="Search by name, phone, ticket ID, device…" oninput="renderCallerList()">
             </div>
             <button class="btn btn-accent btn-sm" onclick="callerFormNew()">
               <svg fill="none" viewBox="0 0 14 14"><path d="M7 2v10M2 7h10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"></path></svg>
@@ -2143,10 +2223,10 @@ Mon, 18 May, 2026</div>
             <!-- Contact info section -->
             <div style="font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);margin:14px 0 8px;padding-top:14px;border-top:1px solid var(--border);">Contact Information</div>
             <div class="field"><label class="field-label">Full Name <span class="req">*</span></label><input type="text" id="cf-name" placeholder="e.g. Ravi Sharma" autocomplete="off"></div>
-            <div class="field"><label class="field-label">Contact Number</label><input type="text" id="cf-phone" placeholder="+91 98765 43210"></div>
-            <div class="field"><label class="field-label">Email Address</label><input type="email" id="cf-email" placeholder="ravi@company.com"></div>
+            <div class="field"><label class="field-label">Contact Number <span class="req">*</span></label><input type="text" id="cf-phone" placeholder="+91 98765 43210"></div>
+            <div class="field"><label class="field-label">Email Address <span class="req">*</span></label><input type="email" id="cf-email" placeholder="ravi@company.com"></div>
             <div class="field">
-              <label class="field-label">Institution</label>
+              <label class="field-label">Institution <span class="req">*</span></label>
               <select id="cf-institution"><option value="">Select institution…</option><option value="inst-0">GD MODI COLLEGE OF ARTS</option><option value="inst-1">RR MEHTA COLLEGE OF SCIENCE AND CL PARIKH COLLEGE OF COMMERCE</option><option value="inst-2">BK MERCANTILE LAW COLLEGE</option><option value="inst-1778652627552">BK MEHTA IT CENTRE BCA COLLEGE</option><option value="inst-1778652636856">BL PARIKH COLLEGE OF BBA</option><option value="inst-1778652653696">MA PARIKH FINEARTS AND ARTS COLLEGE</option><option value="inst-1778652680441">BKDKM COLLEGE OF PROFESSIONAL STUDIES</option><option value="inst-1778653022184">BANASKANTHA DISTRICT KELAVANI MANDAL</option><option value="inst-1778653035960">RADIO PALANPUR 90.4 FM</option></select>
             </div>
             <div class="field">
@@ -2195,6 +2275,10 @@ Mon, 18 May, 2026</div>
             <svg fill="none" viewBox="0 0 14 14" width="13" height="13"><rect x="1" y="3" width="12" height="8" rx="1.2" stroke="currentColor" stroke-width="1.3"></rect><path d="M4 3V2M10 3V2M4 11v1M10 11v1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"></path></svg>
             Hardware Details
           </button>
+          <button class="master-tab" id="mtab-tech" onclick="switchMasterTab('tech')">
+            <svg fill="none" viewBox="0 0 14 14" width="13" height="13"><circle cx="7" cy="5" r="2.5" stroke="currentColor" stroke-width="1.3"></circle><path d="M1.5 13c0-2 2.5-3.5 5.5-3.5s5.5 1.5 5.5 3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"></path><path d="M10.5 8.5l1.5 1.5M12 8.5l-1.5 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"></path></svg>
+            Technician
+          </button>
         </div>
 
         <!-- ── CALLER DATA TAB ── -->
@@ -2240,22 +2324,7 @@ Mon, 18 May, 2026</div>
         <!-- ── HARDWARE DETAILS TAB ── -->
         <div id="mtab-panel-hardware" class="master-layout" style="display:none;">
 
-          <!-- TECHNICIAN -->
-          <div class="master-card">
-            <div class="master-card-head">
-              <svg fill="none" viewBox="0 0 18 18" width="16" height="16"><circle cx="9" cy="6" r="3" stroke="currentColor" stroke-width="1.5"></circle><path d="M3 16c0-3 2.7-5 6-5s6 2 6 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path d="M13 10l1.5 1.5M14.5 10L13 11.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"></path></svg>
-              <span>Technicians</span>
-              <span class="master-count" id="tech-count">6</span>
-            </div>
-            <div class="master-add-row">
-              <input type="text" id="tech-input" class="master-input" placeholder="e.g. Amit Patel…" onkeydown="if(event.key==='Enter')addMasterItem('tech')">
-              <button class="master-add-btn" onclick="addMasterItem('tech')">
-                <svg fill="none" viewBox="0 0 14 14" width="14" height="14"><path d="M7 2v10M2 7h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg>
-                Add
-              </button>
-            </div>
-            <div class="master-list" id="tech-list"><div class="master-item" id="mitem-tech-tech-1778911227135"><div class="master-item-icon">MA</div><span class="master-item-name" title="Mahesh Patel">Mahesh Patel</span><div class="master-actions"><button class="master-btn" onclick="editMasterItem('tech','tech-1778911227135')"><svg fill="none" viewBox="0 0 13 13" width="12" height="12"><path d="M8.5 2l2.5 2.5L4 11H1.5V8.5L8.5 2z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"></path></svg></button><button class="master-btn del" onclick="deleteMasterItem('tech','tech-1778911227135')"><svg fill="none" viewBox="0 0 13 13" width="12" height="12"><path d="M2 4h9M4.5 4V2.5h3V4M10 4l-.6 7H3.6L3 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"></path></svg></button></div></div><div class="master-item" id="mitem-tech-tech-1778911255158"><div class="master-item-icon">VI</div><span class="master-item-name" title="Vishal Chauhan(GC)">Vishal Chauhan(GC)</span><div class="master-actions"><button class="master-btn" onclick="editMasterItem('tech','tech-1778911255158')"><svg fill="none" viewBox="0 0 13 13" width="12" height="12"><path d="M8.5 2l2.5 2.5L4 11H1.5V8.5L8.5 2z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"></path></svg></button><button class="master-btn del" onclick="deleteMasterItem('tech','tech-1778911255158')"><svg fill="none" viewBox="0 0 13 13" width="12" height="12"><path d="M2 4h9M4.5 4V2.5h3V4M10 4l-.6 7H3.6L3 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"></path></svg></button></div></div><div class="master-item" id="mitem-tech-tech-1778911519158"><div class="master-item-icon">SU</div><span class="master-item-name" title="Sudhir Chauhan">Sudhir Chauhan</span><div class="master-actions"><button class="master-btn" onclick="editMasterItem('tech','tech-1778911519158')"><svg fill="none" viewBox="0 0 13 13" width="12" height="12"><path d="M8.5 2l2.5 2.5L4 11H1.5V8.5L8.5 2z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"></path></svg></button><button class="master-btn del" onclick="deleteMasterItem('tech','tech-1778911519158')"><svg fill="none" viewBox="0 0 13 13" width="12" height="12"><path d="M2 4h9M4.5 4V2.5h3V4M10 4l-.6 7H3.6L3 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"></path></svg></button></div></div><div class="master-item" id="mitem-tech-tech-1778913051967"><div class="master-item-icon">AS</div><span class="master-item-name" title="Ashish Panchal(ZC)">Ashish Panchal(ZC)</span><div class="master-actions"><button class="master-btn" onclick="editMasterItem('tech','tech-1778913051967')"><svg fill="none" viewBox="0 0 13 13" width="12" height="12"><path d="M8.5 2l2.5 2.5L4 11H1.5V8.5L8.5 2z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"></path></svg></button><button class="master-btn del" onclick="deleteMasterItem('tech','tech-1778913051967')"><svg fill="none" viewBox="0 0 13 13" width="12" height="12"><path d="M2 4h9M4.5 4V2.5h3V4M10 4l-.6 7H3.6L3 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"></path></svg></button></div></div><div class="master-item" id="mitem-tech-tech-1778913121062"><div class="master-item-icon">RA</div><span class="master-item-name" title="Ramesh Prajapati(GC)">Ramesh Prajapati(GC)</span><div class="master-actions"><button class="master-btn" onclick="editMasterItem('tech','tech-1778913121062')"><svg fill="none" viewBox="0 0 13 13" width="12" height="12"><path d="M8.5 2l2.5 2.5L4 11H1.5V8.5L8.5 2z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"></path></svg></button><button class="master-btn del" onclick="deleteMasterItem('tech','tech-1778913121062')"><svg fill="none" viewBox="0 0 13 13" width="12" height="12"><path d="M2 4h9M4.5 4V2.5h3V4M10 4l-.6 7H3.6L3 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"></path></svg></button></div></div><div class="master-item" id="mitem-tech-tech-1778920675797"><div class="master-item-icon">KA</div><span class="master-item-name" title="Kaushik Sisodiya(RI)">Kaushik Sisodiya(RI)</span><div class="master-actions"><button class="master-btn" onclick="editMasterItem('tech','tech-1778920675797')"><svg fill="none" viewBox="0 0 13 13" width="12" height="12"><path d="M8.5 2l2.5 2.5L4 11H1.5V8.5L8.5 2z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"></path></svg></button><button class="master-btn del" onclick="deleteMasterItem('tech','tech-1778920675797')"><svg fill="none" viewBox="0 0 13 13" width="12" height="12"><path d="M2 4h9M4.5 4V2.5h3V4M10 4l-.6 7H3.6L3 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"></path></svg></button></div></div></div>
-          </div>
+
 
           <!-- DEVICE TYPE -->
           <div class="master-card">
@@ -2320,7 +2389,43 @@ Mon, 18 May, 2026</div>
           </div>
 
         </div>
-      </div><!-- /view-master -->
+
+        <!-- ── TECHNICIAN TAB ── -->
+        <div id="mtab-panel-tech" style="display:none;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;padding:18px;align-items:start;">
+
+            <!-- TECHNICIAN LIST -->
+            <div class="master-card">
+              <div class="master-card-head">
+                <svg fill="none" viewBox="0 0 18 18" width="16" height="16"><circle cx="9" cy="6" r="3" stroke="currentColor" stroke-width="1.5"></circle><path d="M3 16c0-3 2.7-5 6-5s6 2 6 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path d="M13 10l1.5 1.5M14.5 10L13 11.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"></path></svg>
+                <span>Technicians</span>
+                <span class="master-count" id="tech-count">6</span>
+              </div>
+              <div class="master-add-row">
+                <input type="text" id="tech-input" class="master-input" placeholder="e.g. Amit Patel…" onkeydown="if(event.key==='Enter')addMasterItem('tech')">
+                <button class="master-add-btn" onclick="addMasterItem('tech')">
+                  <svg fill="none" viewBox="0 0 14 14" width="14" height="14"><path d="M7 2v10M2 7h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg>
+                  Add
+                </button>
+              </div>
+              <div class="master-list" id="tech-list"></div>
+            </div>
+
+            <!-- WORKLOAD SUMMARY -->
+            <div class="master-card">
+              <div class="master-card-head">
+                <svg fill="none" viewBox="0 0 18 18" width="16" height="16"><rect x="2" y="2" width="14" height="14" rx="2" stroke="currentColor" stroke-width="1.5"></rect><path d="M5 9h8M5 12h5M5 6h8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"></path></svg>
+                <span>Workload Summary</span>
+              </div>
+              <div id="workload-summary-list" style="padding:0;">
+                <p style="text-align:center;padding:32px;color:var(--ink3);font-size:13px;">No ticket data yet.</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+            </div><!-- /view-master -->
 
       <!-- ── REPORTS ── -->
       <div class="view" id="view-reports">
@@ -2469,7 +2574,7 @@ Mon, 18 May, 2026</div>
 
       <!-- ── DASHBOARD ── -->
       <div class="view" id="view-dashboard">
-        <div class="dash-stats" id="dash-stats"><div class="ds-card c-total"><div class="ds-val">10</div><div class="ds-lbl">Total Tickets</div><div class="ds-sub">All time</div></div><div class="ds-card c-open"><div class="ds-val">0</div><div class="ds-lbl">Open</div><div class="ds-sub">0 in progress</div></div><div class="ds-card c-resolved"><div class="ds-val">10</div><div class="ds-lbl">Closed</div><div class="ds-sub">100% resolution rate</div></div><div class="ds-card c-crit"><div class="ds-val">0</div><div class="ds-lbl">P1 Critical</div><div class="ds-sub">0 pending parts</div></div></div>
+        <div class="dash-stats" id="dash-stats"><div class="ds-card c-total"><div class="ds-val">—</div><div class="ds-lbl">Total Tickets</div><div class="ds-sub">All time</div></div><div class="ds-card c-open"><div class="ds-val">—</div><div class="ds-lbl">Open</div><div class="ds-sub">Currently open</div></div><div class="ds-card c-inprog"><div class="ds-val">—</div><div class="ds-lbl">In Progress</div><div class="ds-sub">Being worked on</div></div><div class="ds-card c-pending"><div class="ds-val">—</div><div class="ds-lbl">Pending Parts</div><div class="ds-sub">Awaiting parts</div></div><div class="ds-card c-resolved"><div class="ds-val">—</div><div class="ds-lbl">Closed</div><div class="ds-sub">Resolution rate</div></div><div class="ds-card c-crit"><div class="ds-val">—</div><div class="ds-lbl">P1 Critical</div><div class="ds-sub">Pending parts</div></div></div>
         <div class="dash-grid">
           <div class="card">
             <div class="card-head">
@@ -2498,6 +2603,22 @@ Mon, 18 May, 2026</div>
               <span class="card-head-title">Tickets by Technician</span>
             </div>
             <div class="card-body"><div class="bar-row" id="dash-tech"><div class="bar-item"><div class="bar-head"><span class="bar-label">Unassigned</span><span class="bar-val">8</span></div><div class="bar-track"><div class="bar-fill" style="width:80%;background:var(--purple)"></div></div></div><div class="bar-item"><div class="bar-head"><span class="bar-label">Arjun Mehta</span><span class="bar-val">1</span></div><div class="bar-track"><div class="bar-fill" style="width:10%;background:var(--purple)"></div></div></div><div class="bar-item"><div class="bar-head"><span class="bar-label">Priya Nair</span><span class="bar-val">1</span></div><div class="bar-track"><div class="bar-fill" style="width:10%;background:var(--purple)"></div></div></div></div></div>
+          </div>
+        </div>
+        <div class="dash-grid" style="margin-bottom:14px;grid-template-columns:1fr 1fr;">
+          <div class="card" style="margin-bottom:0;">
+            <div class="card-head">
+              <div class="card-head-icon"><svg fill="none" viewBox="0 0 14 14"><path d="M2 12V4a1 1 0 011-1h8a1 1 0 011 1v8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"></path><path d="M5 12V9h4v3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+              <span class="card-head-title">Tickets by Institution</span>
+            </div>
+            <div class="card-body"><div class="bar-row" id="dash-inst"><p style="color:var(--ink3);font-size:13px;">No data yet</p></div></div>
+          </div>
+          <div class="card" style="margin-bottom:0;">
+            <div class="card-head">
+              <div class="card-head-icon"><svg fill="none" viewBox="0 0 14 14"><path d="M1 12h12M3 12V5.5L7 3l4 2.5V12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"></path><rect x="5.5" y="8" width="3" height="4" rx=".5" stroke="currentColor" stroke-width="1.2"></rect></svg></div>
+              <span class="card-head-title">Tickets by Department</span>
+            </div>
+            <div class="card-body"><div class="bar-row" id="dash-dept"><p style="color:var(--ink3);font-size:13px;">No data yet</p></div></div>
           </div>
         </div>
         <div class="card">
@@ -2564,6 +2685,24 @@ Mon, 18 May, 2026</div>
             <button class="btn btn-sm" onclick="openEmailModal()" style="background:var(--surface2);border:1.5px solid var(--border);">
               <svg fill="none" viewBox="0 0 14 14" width="13" height="13"><rect x="1" y="3" width="12" height="9" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M1 4l6 5 6-5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
               Email Settings
+            </button>
+          </div>
+        </div>
+
+        <!-- WhatsApp card -->
+        <div class="card" style="margin-bottom:16px;max-width:680px;">
+          <div class="card-head">
+            <div class="card-head-icon" style="background:#25d366;">
+              <svg fill="none" viewBox="0 0 14 14" width="14" height="14"><path d="M7 1.5A5.5 5.5 0 1 1 1.5 7c0-.97.25-1.88.69-2.67L1.5 1.5l2.9.67A5.48 5.48 0 0 1 7 1.5z" stroke="#fff" stroke-width="1.2" stroke-linejoin="round"/><path d="M5 5.5c0-.28.22-.5.5-.5.28 0 .5.22.5.5v.5c0 .18-.1.35-.26.44L5.5 7c.3.6.9 1.2 1.5 1.5l.56-.24A.5.5 0 0 1 8 8v.5c0 .28-.22.5-.5.5C5.52 9 5 7 5 5.5z" fill="#fff"/></svg>
+            </div>
+            <span class="card-head-title">WhatsApp Notifications</span>
+            <span id="settings-wa-status" style="margin-left:auto;font-size:11px;font-weight:600;padding:3px 8px;border-radius:20px;background:var(--amber-bg);color:var(--amber);border:1px solid #fcd34d;" class="admin-only"></span>
+          </div>
+          <div class="card-body">
+            <p style="font-size:13px;color:var(--ink2);line-height:1.65;margin-bottom:14px;">Send automatic WhatsApp messages when tickets are created, updated, or closed — using the free <strong>CallMeBot API</strong>. No server needed.</p>
+            <button class="btn btn-sm" onclick="openWaModal()" style="background:#e9fdf2;border:1.5px solid #86efac;color:#166534;">
+              <svg fill="none" viewBox="0 0 14 14" width="13" height="13"><path d="M7 1.5A5.5 5.5 0 1 1 1.5 7c0-.97.25-1.88.69-2.67L1.5 1.5l2.9.67A5.48 5.48 0 0 1 7 1.5z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
+              WhatsApp Settings
             </button>
           </div>
         </div>
@@ -2749,7 +2888,7 @@ Mon, 18 May, 2026</div>
       <div class="bulk-step-num">2</div>
       <div style="flex:1;">
         <div class="bulk-step-title">Upload CSV File</div>
-        <div class="bulk-step-sub">Only <b>name</b> is required. All other fields are optional.</div>
+        <div class="bulk-step-sub">Fields <b>name, phone, email</b> and <b>institution</b> are required. Department is optional.</div>
         <div class="bulk-drop-zone" id="bulk-drop-zone" onclick="document.getElementById('bulk-file-input').click()" ondragover="bulkDragOver(event)" ondragleave="bulkDragLeave(event)" ondrop="bulkDrop(event)">
           <svg fill="none" viewBox="0 0 40 40" width="36" height="36" style="color:var(--ink3);margin-bottom:6px;"><rect x="6" y="4" width="28" height="32" rx="3" stroke="currentColor" stroke-width="1.5"></rect><path d="M13 14h14M13 19h14M13 24h8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"></path></svg>
           <div style="font-size:13px;font-weight:600;color:var(--ink2);">Drop CSV here or <span style="color:var(--accent);text-decoration:underline;cursor:pointer;">browse</span></div>
@@ -2906,6 +3045,50 @@ Mon, 18 May, 2026</div>
   </div>
 </div>
 
+<!-- WhatsApp Config Modal -->
+<div class="modal-overlay" id="wa-modal">
+  <div class="email-modal-box" style="max-width:520px;">
+    <h3>📱 WhatsApp Notification Setup</h3>
+    <p class="email-modal-sub">
+      Uses the free <a href="https://www.callmebot.com/blog/free-api-whatsapp-messages/" target="_blank">CallMeBot API</a> to send WhatsApp messages directly from the browser — no server needed.<br>
+      <strong style="color:var(--ink);">Setup (2 min):</strong> Send <code style="background:var(--surface2);padding:1px 5px;border-radius:3px;">I allow callmebot to send me messages</code> to <strong>+34 644 82 53 85</strong> on WhatsApp, then wait for your API key reply.
+    </p>
+
+    <div id="wa-status-row" class="email-status-row esr-off">
+      <span class="esr-dot"></span>
+      <span id="wa-status-text">Not configured — WhatsApp messages will not be sent</span>
+    </div>
+
+    <div class="login-field" style="margin-bottom:12px;">
+      <label style="display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--ink3);margin-bottom:5px;">Admin WhatsApp Number <span style="color:var(--red);">*</span></label>
+      <input type="text" id="wa-admin-phone" placeholder="e.g. 919876543210 (with country code, no +)" style="width:100%;padding:9px 12px;border-radius:var(--r);border:1.5px solid var(--border);font-size:13px;color:var(--ink);font-family:var(--mono);outline:none;">
+      <div style="font-size:11px;color:var(--ink3);margin-top:4px;">Include country code without + symbol. India: 91xxxxxxxxxx</div>
+    </div>
+    <div class="login-field" style="margin-bottom:12px;">
+      <label style="display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--ink3);margin-bottom:5px;">CallMeBot API Key <span style="color:var(--red);">*</span></label>
+      <input type="text" id="wa-api-key" placeholder="e.g. 1234567" style="width:100%;padding:9px 12px;border-radius:var(--r);border:1.5px solid var(--border);font-size:13px;color:var(--ink);font-family:var(--mono);outline:none;">
+      <div style="font-size:11px;color:var(--ink3);margin-top:4px;">You receive this key from CallMeBot after sending the activation message.</div>
+    </div>
+
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;margin-bottom:16px;">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--ink3);margin-bottom:8px;">Notify on</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <label style="display:flex;align-items:center;gap:6px;font-size:12.5px;cursor:pointer;"><input type="checkbox" id="wa-on-create" checked style="accent-color:var(--accent);"> New ticket created</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:12.5px;cursor:pointer;"><input type="checkbox" id="wa-on-update" checked style="accent-color:var(--accent);"> Status updated</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:12.5px;cursor:pointer;"><input type="checkbox" id="wa-on-close" checked style="accent-color:var(--accent);"> Ticket closed</label>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;">
+      <button class="btn" onclick="closeWaModal()">Cancel</button>
+      <button class="btn btn-red btn-sm" onclick="clearWaConfig()">Clear Config</button>
+      <button class="btn btn-sm" id="wa-test-btn" onclick="sendTestWa()" style="color:#166534;border-color:#86efac;background:#e9fdf2;">Send Test</button>
+      <button class="btn btn-accent" onclick="saveWaConfig()">Save &amp; Enable</button>
+    </div>
+  </div>
+</div>
+
+
 <!-- Email Config Modal -->
 <div class="modal-overlay" id="email-modal">
   <div class="email-modal-box">
@@ -2976,17 +3159,21 @@ Mon, 18 May, 2026</div>
     <div class="detail-head">
       <span class="topbar-tid" id="detail-tid">—</span>
       <span style="flex:1;font-weight:600;font-size:13px;color:rgba(255,255,255,.85);font-family:var(--sans);" id="detail-name">—</span>
-      <button class="btn btn-sm" id="btn-edit-ticket" onclick="enterEditMode()" style="gap:5px;background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.15);color:rgba(255,255,255,.8);">
+      <button class="btn btn-sm" id="btn-edit-ticket" onclick="enterEditMode()" style="gap:5px;background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.9);">
         <svg fill="none" viewBox="0 0 14 14" width="13" height="13"><path d="M9.5 2.5l2 2L4 12H2v-2L9.5 2.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"></path></svg>
-        Edit
+        Edit Ticket
       </button>
       <button class="btn btn-ghost btn-sm" onclick="closeDetail()" style="color:rgba(255,255,255,.5);border-color:transparent;">✕</button>
     </div>
     <div class="detail-edit-bar" id="detail-edit-bar">
-      <svg fill="none" viewBox="0 0 14 14" width="13" height="13"><path d="M9.5 2.5l2 2L4 12H2v-2L9.5 2.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"></path></svg>
-      Editing ticket — changes will be saved to all views
+      <svg fill="none" viewBox="0 0 14 14" width="13" height="13" style="flex-shrink:0;opacity:.7"><path d="M9.5 2.5l2 2L4 12H2v-2L9.5 2.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"></path></svg>
+      <span style="color:rgba(255,255,255,.9);font-weight:600;">Edit Mode</span>
+      <span style="color:rgba(255,255,255,.4);font-size:11px;">— unsaved changes are highlighted</span>
       <span style="flex:1"></span>
-      <button class="btn btn-sm" onclick="cancelEditMode()" style="font-size:12px;">Cancel</button>
+      <button class="btn btn-sm" onclick="cancelEditMode()" style="background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.15);color:rgba(255,255,255,.7);font-size:12px;">
+        <svg fill="none" viewBox="0 0 14 14" width="12" height="12"><path d="M10 4L4 10M4 4l6 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        Cancel
+      </button>
       <button class="btn btn-accent btn-sm" onclick="saveEditedTicket()" style="font-size:12px;">
         <svg fill="none" viewBox="0 0 14 14" width="12" height="12"><path d="M2 7l3.5 3.5L12 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
         Save Changes
@@ -3001,7 +3188,7 @@ Mon, 18 May, 2026</div>
 //  AUTH STATE
 // ═══════════════════════════════════════════════════════════════
 var currentUser = null; // { username, role: 'admin'|'user', displayName }
-var loginTab = 'user';
+var loginTab = 'admin'; // matches the default active tab in HTML
 
 // ── Firebase state ──
 var db = null;
@@ -3029,6 +3216,15 @@ var ejsConfig = { pubkey: '', service: '', template: '', admin_email: 'patelmahe
   if (ejsConfig.enabled && ejsConfig.pubkey) {
     try { emailjs.init({ publicKey: ejsConfig.pubkey }); } catch(e) {}
   }
+})();
+
+// ── WhatsApp / CallMeBot config ──
+var waConfig = { phone: '', apiKey: '', onCreate: true, onUpdate: true, onClose: true, enabled: false };
+(function loadWaConfig() {
+  try {
+    var saved = JSON.parse(localStorage.getItem('hd_wa_cfg') || 'null');
+    if (saved) waConfig = saved;
+  } catch(e) {}
 })();
 
 var USERS = {
@@ -3267,6 +3463,8 @@ function setIdleTimeout(m)     { IDLE_TIMEOUT_MS = m*60000; WARN_BEFORE_MS = Mat
 function doLogout() {
   stopIdleWatcher();
   currentUser = null;
+  var appShell = document.getElementById('app-shell');
+  if (appShell) appShell.style.display = 'none';
   document.getElementById('login-screen').classList.add('visible');
   document.getElementById('login-username').value = '';
   document.getElementById('login-password').value = '';
@@ -3276,6 +3474,8 @@ function doLogout() {
 
 function showApp() {
   document.getElementById('login-screen').classList.remove('visible');
+  var appShell = document.getElementById('app-shell');
+  if (appShell) appShell.style.display = '';
   applyRoleUI();
 }
 
@@ -3346,7 +3546,8 @@ function applyRoleUI() {
     updateUsersNavBadge();
     updateCallersNavBadge();
     refreshEmailStatusRow();
-    goView('new');
+    refreshWaStatusRow();
+    goView('dashboard');
     syncMasterToDropdowns();  // populate model/serial/dept/inst dropdowns
     updateSidebarStats();     // re-calculate with admin scope
     updateNavCount();
@@ -3430,7 +3631,8 @@ function goView(v) {
   });
   var titles = { new:'New Hardware Ticket', list:'All Tickets', dashboard:'Dashboard', mytickets:'My Tickets', users:'Users', master:'Master Data', reports:'Reports', settings:'Settings' };
   var title = titles[v] || v;
-  if (v === 'list') title = 'All Tickets (' + tickets.length + ')';
+  if (v === 'list')  title = 'All Tickets (' + tickets.length + ')';
+  if (v === 'users') title = 'Users (' + callers.length + ')';
   setEl('topbar-title', title);
 
   var showSubmit = v === 'new';
@@ -3607,8 +3809,14 @@ function renderLog() {
 function submitTicket() {
   var name = document.getElementById('f-name').value.trim();
   var desc = document.getElementById('f-desc').value.trim();
-  if (!name) { toast('Please enter the caller\'s name', 'error'); document.getElementById('f-name').focus(); return; }
-  if (!desc) { toast('Please describe the issue', 'error'); document.getElementById('f-desc').focus(); return; }
+  var phone = document.getElementById('f-phone').value.trim();
+  var email = document.getElementById('f-email').value.trim();
+  var institution = document.getElementById('f-institution').value;
+  if (!name)        { toast('Please enter the caller\'s name', 'error');        document.getElementById('f-name').focus();        return; }
+  if (!phone)       { toast('Please enter the contact number', 'error');        document.getElementById('f-phone').focus();       return; }
+  if (!email)       { toast('Please enter the email address', 'error');         document.getElementById('f-email').focus();       return; }
+  if (!institution) { toast('Please select an institution', 'error');           document.getElementById('f-institution').focus(); return; }
+  if (!desc)        { toast('Please describe the issue', 'error');              document.getElementById('f-desc').focus();        return; }
 
   var cats = Array.from(document.querySelectorAll('#f-cats .tag.on')).map(function(t){ return t.textContent; }).join(', ') || 'Not specified';
   var status = (document.querySelector('.stat-opt.on')||{}).textContent || 'Open';
@@ -3652,6 +3860,7 @@ function submitTicket() {
     toast('Ticket '+currentTid+' submitted successfully!', 'success');
   }
   sendTicketEmail(ticket);
+  sendWhatsApp(ticket, 'create');
   updateMyTicketsBadge();
   clearForm();
 }
@@ -4311,8 +4520,8 @@ function enterEditMode() {
   var priorities = ['p1','p2','p3','p4'];
   var priLabels = {p1:'P1',p2:'P2',p3:'P3',p4:'P4'};
 
-  function inp(id, val, placeholder) {
-    return '<input class="edit-input" id="ed-'+id+'" value="'+escAttr(val||'')+'" placeholder="'+(placeholder||'')+'">';
+  function inp(id, val, placeholder, type) {
+    return '<input class="edit-input" id="ed-'+id+'" type="'+(type||'text')+'" value="'+escAttr(val||'')+'" placeholder="'+(placeholder||'')+'">';
   }
   function sel(id, options, current) {
     return '<select class="edit-select" id="ed-'+id+'">'+
@@ -4322,14 +4531,18 @@ function enterEditMode() {
   function textarea(id, val, placeholder) {
     return '<textarea class="edit-textarea" id="ed-'+id+'" placeholder="'+(placeholder||'')+'">'+escHtml(val||'')+'</textarea>';
   }
-  function edf(label, input) {
-    return '<div class="detail-field" style="flex-direction:column;gap:5px;align-items:stretch;"><span class="df-label" style="font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--ink3);">'+label+'</span>'+input+'</div>';
+  function ef(label, input) {
+    return '<div class="edit-field"><label class="edit-label">'+label+'</label>'+input+'</div>';
   }
 
   var priHtml = '<div class="edit-pri-grid">'+
     priorities.map(function(p){
-      var sel = p===t.priority ? ' sel-'+p : '';
-      return '<div class="edit-pri-opt'+sel+'" data-p="'+p+'" onclick="selectEditPri(this)">'+priLabels[p]+'</div>';
+      var isSelected = p===t.priority ? ' sel-'+p : '';
+      var priDesc = {p1:'Critical',p2:'High',p3:'Medium',p4:'Low'};
+      return '<div class="edit-pri-opt'+isSelected+'" data-p="'+p+'" onclick="selectEditPri(this)">'
+        + '<div style="font-size:14px;font-weight:800;">'+priLabels[p]+'</div>'
+        + '<div style="font-size:9px;margin-top:1px;opacity:.7;">'+priDesc[p]+'</div>'
+        + '</div>';
     }).join('')+
   '</div>';
 
@@ -4341,33 +4554,82 @@ function enterEditMode() {
 
   var body = document.getElementById('detail-body');
   body.innerHTML =
-    '<div class="detail-section"><div class="detail-section-title">Caller</div>'+
-    edf('Full Name', inp('name', t.name, 'Full name'))+
-    edf('Phone', inp('phone', t.phone, '+91 98765 43210'))+
-    edf('Email', inp('email', t.email, 'email@company.com'))+
-    edf('Institution', sel('institution', insts, t.institution))+
-    edf('Department', sel('dept', ['',...depts], t.dept))+
-    '</div><div class="detail-section"><div class="detail-section-title">Hardware</div>'+
-    edf('Device Type', sel('device', ['',...devices], t.device))+
-    edf('Make / Model', sel('model', models, t.model))+
-    edf('Asset / Serial No.', inp('asset', t.asset, 'e.g. AST-20847'))+
-    edf('Location', inp('loc', t.loc, 'e.g. Floor 2, Room 204'))+
-    edf('Warranty', sel('warranty', warranties, t.warranty||'Unknown'))+
-    '</div><div class="detail-section"><div class="detail-section-title">Ticket Info</div>'+
-    edf('Priority', priHtml)+
-    edf('Status', statHtml)+
-    edf('Technician', sel('tech', techs, t.tech||''))+
-    edf('ETA', inp('eta', t.eta, 'e.g. 2 hours, Tomorrow 5pm'))+
-    '</div><div class="detail-section"><div class="detail-section-title">Description</div>'+
-    edf('', textarea('desc', t.desc, 'Describe the issue…'))+
-    (currentUser && currentUser.role === 'admin' ? '</div><div class="detail-section"><div class="detail-section-title">Internal Notes</div>'+edf('', textarea('notes', t.notes, 'Internal notes for technicians…')) : '')+
-    '</div><div class="detail-section"><div class="detail-section-title">Resolution</div>'+
-    edf('', textarea('resolution', t.resolution, 'How was the issue resolved?'))+
-    '</div>';
+
+    /* ── Section 1: Caller ── */
+    '<div class="edit-section">'
+    + '<div class="edit-section-title"><svg fill="none" viewBox="0 0 14 14" width="12" height="12"><circle cx="7" cy="4.5" r="2.5" stroke="currentColor" stroke-width="1.3"/><path d="M2 12c0-2.76 2.24-5 5-5s5 2.24 5 5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg> Caller</div>'
+    + '<div class="edit-row-2">'
+    +   ef('Full Name', inp('name', t.name, 'Full name'))
+    +   ef('Phone', inp('phone', t.phone, '+91 98765 43210'))
+    + '</div>'
+    + '<div class="edit-row-2">'
+    +   ef('Email', inp('email', t.email, 'email@company.com', 'email'))
+    +   ef('Department', sel('dept', ['',...depts], t.dept))
+    + '</div>'
+    + ef('Institution', sel('institution', insts, t.institution))
+    + '</div>'
+
+    /* ── Section 2: Hardware ── */
+    + '<div class="edit-section">'
+    + '<div class="edit-section-title"><svg fill="none" viewBox="0 0 14 14" width="12" height="12"><rect x="2" y="3" width="10" height="7" rx="1" stroke="currentColor" stroke-width="1.3"/><path d="M5 10v1.5M9 10v1.5M3.5 11.5h7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg> Hardware</div>'
+    + '<div class="edit-row-2">'
+    +   ef('Device Type', sel('device', ['',...devices], t.device))
+    +   ef('Make / Model', sel('model', models, t.model))
+    + '</div>'
+    + '<div class="edit-row-2">'
+    +   ef('Asset / Serial No.', inp('asset', t.asset, 'e.g. AST-20847'))
+    +   ef('Location', inp('loc', t.loc, 'e.g. Floor 2, Room 204'))
+    + '</div>'
+    + ef('Warranty Status', sel('warranty', warranties, t.warranty||'Unknown'))
+    + '</div>'
+
+    /* ── Section 3: Ticket Info ── */
+    + '<div class="edit-section">'
+    + '<div class="edit-section-title"><svg fill="none" viewBox="0 0 14 14" width="12" height="12"><rect x="2" y="2" width="10" height="10" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M5 5h4M5 7h4M5 9h2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg> Ticket Info</div>'
+    + ef('Priority', priHtml)
+    + ef('Status', statHtml)
+    + '<div class="edit-row-2">'
+    +   ef('Assigned Technician', sel('tech', techs, t.tech||''))
+    +   ef('ETA / Target', inp('eta', t.eta, 'e.g. 2 hours, Tomorrow 5pm'))
+    + '</div>'
+    + '</div>'
+
+    /* ── Section 4: Description ── */
+    + '<div class="edit-section">'
+    + '<div class="edit-section-title"><svg fill="none" viewBox="0 0 14 14" width="12" height="12"><path d="M3 3h8M3 6h8M3 9h5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg> Description &amp; Notes</div>'
+    + ef('Problem Description', textarea('desc', t.desc, 'Describe the issue in detail…'))
+    + (currentUser && currentUser.role === 'admin'
+        ? ef('Internal Notes <span style="font-size:9px;opacity:.6;">(admin only)</span>', textarea('notes', t.notes, 'Internal notes for technicians…'))
+        : '')
+    + ef('Resolution', textarea('resolution', t.resolution, 'How was the issue resolved?'))
+    + '</div>'
+
+    /* ── Save bar at bottom ── */
+    + '<div style="display:flex;gap:8px;justify-content:flex-end;padding:4px 0 20px;">'
+    + '<button class="btn btn-sm" onclick="cancelEditMode()" style="padding:9px 18px;">Cancel</button>'
+    + '<button class="btn btn-accent" onclick="saveEditedTicket()" style="padding:9px 20px;">'
+    +   '<svg fill="none" viewBox="0 0 14 14" width="13" height="13"><path d="M2 7l3.5 3.5L12 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Save Changes'
+    + '</button>'
+    + '</div>';
 
   document.getElementById('detail-edit-bar').classList.add('visible');
   document.getElementById('btn-edit-ticket').style.display = 'none';
   document.getElementById('detail-panel').scrollTop = 0;
+
+  // Reset bar to normal editing state (clears any leftover "Saved" flash)
+  var editBar = document.getElementById('detail-edit-bar');
+  editBar.style.background = '';
+  editBar.innerHTML =
+    '<svg fill="none" viewBox="0 0 14 14" width="13" height="13" style="flex-shrink:0;opacity:.7"><path d="M9.5 2.5l2 2L4 12H2v-2L9.5 2.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"></path></svg>'
+    + '<span style="color:rgba(255,255,255,.9);font-weight:600;">Edit Mode</span>'
+    + '<span style="color:rgba(255,255,255,.4);font-size:11px;margin-left:4px;">— unsaved changes are highlighted</span>'
+    + '<span style="flex:1"></span>'
+    + '<button class="btn btn-sm" onclick="cancelEditMode()" style="background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.15);color:rgba(255,255,255,.7);font-size:12px;">'
+    +   '<svg fill="none" viewBox="0 0 14 14" width="12" height="12"><path d="M10 4L4 10M4 4l6 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg> Cancel'
+    + '</button>'
+    + '<button class="btn btn-accent btn-sm" onclick="saveEditedTicket()" style="font-size:12px;">'
+    +   '<svg fill="none" viewBox="0 0 14 14" width="12" height="12"><path d="M2 7l3.5 3.5L12 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Save Changes'
+    + '</button>';
 }
 
 function selectEditPri(el) {
@@ -4455,9 +4717,21 @@ function saveEditedTicket() {
 
   setEl('detail-tid', t.id);
   setEl('detail-name', t.name);
-  renderDetailView(t);
-  document.getElementById('detail-edit-bar').classList.remove('visible');
-  document.getElementById('btn-edit-ticket').style.display = '';
+
+  // Flash the edit bar green briefly so the user sees "Saved" before switching to read-only
+  var editBar = document.getElementById('detail-edit-bar');
+  editBar.innerHTML =
+    '<svg fill="none" viewBox="0 0 14 14" width="14" height="14"><path d="M2 7l3.5 3.5L12 3" stroke="#4ade80" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+    + '<span style="color:#4ade80;font-weight:700;">Saved successfully</span>';
+  editBar.style.background = 'rgba(22,101,52,.85)';
+
+  setTimeout(function() {
+    renderDetailView(t);
+    editBar.classList.remove('visible');
+    editBar.style.background = '';
+    document.getElementById('btn-edit-ticket').style.display = '';
+    document.getElementById('detail-panel').scrollTop = 0;
+  }, 900);
 
   if (currentView === 'list') renderList();
   if (currentView === 'dashboard') renderDashboard();
@@ -4553,10 +4827,12 @@ function renderDashboard() {
   var pending = tickets.filter(function(t){ return t.status==='Pending Parts'; }).length;
 
   setHtml('dash-stats',
-    dCard('Total Tickets', total, 'c-total', 'All time')+
-    dCard('Open', open, 'c-open', inprog+' in progress')+
-    dCard('Closed', resolved, 'c-resolved', Math.round(total?resolved/total*100:0)+'% resolution rate')+
-    dCard('P1 Critical', p1, 'c-crit', pending+' pending parts')
+    dCard('Total Tickets', total,    'c-total',    'All time')+
+    dCard('Open',          open,     'c-open',     'Currently open')+
+    dCard('In Progress',   inprog,   'c-inprog',   'Being worked on')+
+    dCard('Pending Parts', pending,  'c-pending',  'Awaiting parts')+
+    dCard('Closed',        resolved, 'c-resolved', Math.round(total?resolved/total*100:0)+'% resolution rate')+
+    dCard('P1 Critical',   p1,       'c-crit',     pending+' pending parts')
   );
 
   function countBy(key, val) { return tickets.filter(function(t){ return t[key]===val; }).length; }
@@ -4585,12 +4861,23 @@ function renderDashboard() {
   var techHtml = Object.keys(techs).sort(function(a,b){ return techs[b]-techs[a]; }).map(function(k){ return barItem(k, techs[k], total, 'var(--purple)'); }).join('');
   setHtml('dash-tech', techHtml || '<p style="color:var(--ink3);font-size:13px;">No data yet</p>');
 
+  var insts = {};
+  tickets.forEach(function(t){ if(t.institution) insts[t.institution]=(insts[t.institution]||0)+1; });
+  var instHtml = Object.keys(insts).sort(function(a,b){ return insts[b]-insts[a]; }).slice(0,8).map(function(k){ return barItem(k, insts[k], total, 'var(--cyan)'); }).join('');
+  setHtml('dash-inst', instHtml || '<p style="color:var(--ink3);font-size:13px;">No data yet</p>');
+
+  var depts = {};
+  tickets.forEach(function(t){ if(t.dept) depts[t.dept]=(depts[t.dept]||0)+1; });
+  var deptHtml = Object.keys(depts).sort(function(a,b){ return depts[b]-depts[a]; }).slice(0,8).map(function(k){ return barItem(k, depts[k], total, 'var(--blue)'); }).join('');
+  setHtml('dash-dept', deptHtml || '<p style="color:var(--ink3);font-size:13px;">No data yet</p>');
+
   setEl('dash-recent-count', tickets.length);
-  var recentHtml = tickets.slice(0,8).map(function(t) {
+  var recentHtml = tickets.slice(0,8).map(function(t, i) {
     var priClass='pill-'+t.priority;
     var statClass={'Open':'pill-open','In Progress':'pill-inprog','Pending Parts':'pill-pending','Closed':'pill-resolved'}[t.status]||'pill-open';
     var d=t.created?new Date(t.created).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}):'—';
-    return '<div style="display:flex;align-items:center;gap:12px;padding:11px 18px;border-bottom:1px solid var(--border);font-size:13px;cursor:pointer;" onclick="viewTicket(\''+t.id+'\')"><span style="font-family:var(--mono);font-size:11px;color:var(--accent);white-space:nowrap;">'+t.id+'</span><span style="font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+t.name+'</span><span style="color:var(--ink3);font-size:12px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+(t.device||'—')+'</span><span class="pill '+priClass+'">'+t.priority.toUpperCase()+'</span><span class="pill '+statClass+'">'+t.status+'</span><span style="font-family:var(--mono);font-size:11px;color:var(--ink3);white-space:nowrap;">'+d+'</span></div>';
+    var rowBg = i % 2 === 1 ? 'background:var(--accent3);' : '';
+    return '<div style="display:flex;align-items:center;gap:12px;padding:11px 18px;border-bottom:1px solid var(--border);font-size:13px;cursor:pointer;'+rowBg+'" onclick="viewTicket(\''+t.id+'\')"><span style="font-family:var(--mono);font-size:11px;color:var(--accent);white-space:nowrap;">'+t.id+'</span><span style="font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+t.name+'</span><span style="color:var(--ink3);font-size:12px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+(t.device||'—')+'</span><span class="pill '+priClass+'">'+t.priority.toUpperCase()+'</span><span class="pill '+statClass+'">'+t.status+'</span><span style="font-family:var(--mono);font-size:11px;color:var(--ink3);white-space:nowrap;">'+d+'</span></div>';
   }).join('');
   setHtml('dash-recent', recentHtml || '<p style="text-align:center;padding:32px;color:var(--ink3);font-size:13px;">No tickets yet. Submit your first ticket to see data here.</p>');
 }
@@ -4602,6 +4889,58 @@ function dCard(label, val, cls, sub) {
 function barItem(label, count, total, color) {
   var pct = total > 0 ? Math.round(count/total*100) : 0;
   return '<div class="bar-item"><div class="bar-head"><span class="bar-label">'+label+'</span><span class="bar-val">'+count+'</span></div><div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;background:'+color+'"></div></div></div>';
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  WORKLOAD SUMMARY (Technician tab)
+// ═══════════════════════════════════════════════════════════════
+function renderWorkloadSummary() {
+  var el = document.getElementById('workload-summary-list');
+  if (!el) return;
+
+  // Build per-technician counts from all tickets
+  var techData = {};
+  masterData.tech.forEach(function(t) { techData[t.value] = { open: 0, closed: 0 }; });
+
+  tickets.forEach(function(t) {
+    var name = t.tech || 'Unassigned';
+    if (!techData[name]) techData[name] = { open: 0, closed: 0 };
+    if (t.status === 'Closed') techData[name].closed++;
+    else techData[name].open++;
+  });
+
+  var names = Object.keys(techData);
+  if (!names.length) {
+    el.innerHTML = '<p style="text-align:center;padding:32px;color:var(--ink3);font-size:13px;">No technicians added yet.</p>';
+    return;
+  }
+
+  // Sort: most total tickets first
+  names.sort(function(a, b) {
+    var ta = techData[a].open + techData[a].closed;
+    var tb = techData[b].open + techData[b].closed;
+    return tb - ta;
+  });
+
+  el.innerHTML = names.map(function(name) {
+    var d = techData[name];
+    var total = d.open + d.closed;
+    var initials = name.split(' ').map(function(w){ return w[0]||''; }).join('').toUpperCase().slice(0,2);
+    var openColor  = d.open  > 0 ? 'var(--accent)' : 'var(--ink3)';
+    var closeColor = d.closed > 0 ? 'var(--red)'    : 'var(--ink3)';
+    return '<div style="display:flex;align-items:center;gap:13px;padding:13px 16px;border-bottom:1px solid var(--border);">'
+      + '<div style="width:36px;height:36px;border-radius:50%;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">' + escHtml(initials) + '</div>'
+      + '<div style="flex:1;min-width:0;">'
+      +   '<div style="font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + escHtml(name) + '</div>'
+      +   '<div style="font-size:11.5px;color:var(--ink3);margin-top:1px;">' + total + ' total ticket' + (total !== 1 ? 's' : '') + '</div>'
+      + '</div>'
+      + '<div style="text-align:right;flex-shrink:0;">'
+      +   '<span style="font-family:var(--mono);font-size:12px;font-weight:700;color:' + openColor + ';">' + d.open + ' open</span>'
+      +   '<span style="color:var(--border2);margin:0 5px;">/</span>'
+      +   '<span style="font-family:var(--mono);font-size:12px;font-weight:700;color:' + closeColor + ';">' + d.closed + ' closed</span>'
+      + '</div>'
+      + '</div>';
+  }).join('');
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -4834,7 +5173,10 @@ function saveUser() {
 
   errEl.style.display = 'none';
   accErrEl.style.display = 'none';
-  if (!name) { errEl.textContent = 'Full name is required.'; errEl.style.display = 'block'; return; }
+  if (!name)        { errEl.textContent = 'Full name is required.';     errEl.style.display = 'block'; return; }
+  if (!phone)       { errEl.textContent = 'Contact number is required.'; errEl.style.display = 'block'; return; }
+  if (!email)       { errEl.textContent = 'Email address is required.';  errEl.style.display = 'block'; return; }
+  if (!institution) { errEl.textContent = 'Institution is required.';    errEl.style.display = 'block'; return; }
 
   // Validate login account fields if username entered
   if (username) {
@@ -4939,13 +5281,39 @@ function useCallerInForm() {
 
 function renderCallerList() {
   var q = (document.getElementById('caller-search') ? document.getElementById('caller-search').value : '').trim().toLowerCase();
+
   var filtered = callers.filter(function(c) {
     if (!q) return true;
-    return (c.name||'').toLowerCase().includes(q)
+
+    // Match caller fields
+    var callerMatch = (c.name||'').toLowerCase().includes(q)
       || (c.phone||'').toLowerCase().includes(q)
       || (c.email||'').toLowerCase().includes(q)
       || (c.dept||'').toLowerCase().includes(q)
-      || (c.institution||'').toLowerCase().includes(q);
+      || (c.institution||'').toLowerCase().includes(q)
+      || (c.linkedUsername||'').toLowerCase().includes(q);
+
+    if (callerMatch) return true;
+
+    // Also match any of this caller's tickets
+    var callerTickets = tickets.filter(function(t) {
+      return (t.name||'').toLowerCase() === (c.name||'').toLowerCase()
+          || (c.phone && t.phone === c.phone)
+          || (c.email && t.email === c.email);
+    });
+
+    return callerTickets.some(function(t) {
+      return (t.id||'').toLowerCase().includes(q)
+          || (t.device||'').toLowerCase().includes(q)
+          || (t.model||'').toLowerCase().includes(q)
+          || (t.asset||'').toLowerCase().includes(q)
+          || (t.cats||'').toLowerCase().includes(q)
+          || (t.desc||'').toLowerCase().includes(q)
+          || (t.status||'').toLowerCase().includes(q)
+          || (t.priority||'').toLowerCase().includes(q)
+          || (t.tech||'').toLowerCase().includes(q)
+          || (t.loc||'').toLowerCase().includes(q);
+    });
   });
 
   var countEl = document.getElementById('caller-count-info');
@@ -4968,6 +5336,50 @@ function renderCallerList() {
     var loginBadge = c.linkedUsername
       ? '<span style="font-size:9.5px;font-family:var(--mono);background:var(--accent-bg);color:var(--accent);border-radius:10px;padding:2px 7px;font-weight:600;">🔑 ' + escHtml(c.linkedUsername) + '</span>'
       : '';
+
+    // Caller's tickets — match by name, phone or email
+    var callerTickets = tickets.filter(function(t) {
+      return (t.name||'').toLowerCase() === (c.name||'').toLowerCase()
+          || (c.phone && t.phone === c.phone)
+          || (c.email && t.email === c.email);
+    }).sort(function(a,b){ return (b.created||'').localeCompare(a.created||''); });
+
+    // Determine which tickets match the current search
+    var matchedIds = {};
+    if (q) {
+      callerTickets.forEach(function(t) {
+        if ((t.id||'').toLowerCase().includes(q)
+         || (t.device||'').toLowerCase().includes(q)
+         || (t.model||'').toLowerCase().includes(q)
+         || (t.asset||'').toLowerCase().includes(q)
+         || (t.cats||'').toLowerCase().includes(q)
+         || (t.desc||'').toLowerCase().includes(q)
+         || (t.status||'').toLowerCase().includes(q)
+         || (t.priority||'').toLowerCase().includes(q)
+         || (t.tech||'').toLowerCase().includes(q)
+         || (t.loc||'').toLowerCase().includes(q)) {
+          matchedIds[t.id] = true;
+        }
+      });
+    }
+
+    var statClass = { 'Open':'pill-open','In Progress':'pill-inprog','Pending Parts':'pill-pending','Closed':'pill-resolved' };
+    var shownTickets = callerTickets.slice(0,5);
+    var histHtml = shownTickets.length
+      ? shownTickets.map(function(t) {
+          var d = t.created ? new Date(t.created).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}) : '—';
+          var isMatch = matchedIds[t.id];
+          return '<div class="caller-hist-item" style="'+(isMatch?'background:var(--amber-bg);border-color:#fcd34d;':'')+'" onclick="event.stopPropagation();viewTicket(\''+escAttr(t.id)+'\')">'
+            + '<span class="caller-hist-id">'+escHtml(t.id)+'</span>'
+            + '<span class="caller-hist-device">'+(t.device||'—')+(t.dept?' · '+escHtml(t.dept):'')+'</span>'
+            + '<span class="pill pill-'+(t.priority||'p3')+'">'+((t.priority||'p3').toUpperCase())+'</span>'
+            + '<span class="pill '+(statClass[t.status]||'pill-open')+'">'+escHtml(t.status||'Open')+'</span>'
+            + '<span class="caller-hist-date">'+d+'</span>'
+            + '</div>';
+        }).join('')
+        + (callerTickets.length > 5 ? '<div style="font-size:11px;color:var(--ink3);padding:4px 8px;">+' + (callerTickets.length-5) + ' more tickets</div>' : '')
+      : '<div class="caller-hist-empty">No tickets yet</div>';
+
     var isSelected = c.id === editingCallerId;
     return '<div class="caller-card' + (isSelected ? ' selected' : '') + '" data-id="' + escAttr(c.id) + '" onclick="callerFormEdit(\'' + escAttr(c.id) + '\')">'
       + '<div class="caller-avatar">' + initials + '</div>'
@@ -4975,8 +5387,12 @@ function renderCallerList() {
       +   '<div class="caller-info-name">' + escHtml(c.name) + '</div>'
       +   '<div class="caller-info-meta">' + phone + email + inst + '</div>'
       +   (loginBadge ? '<div style="margin-top:4px;">' + loginBadge + '</div>' : '')
+      +   '<div class="caller-history-wrap">'
+      +     '<div class="caller-history-title"><span>Ticket History</span><span style="font-weight:400;">' + callerTickets.length + ' ticket' + (callerTickets.length!==1?'s':'') + '</span></div>'
+      +     histHtml
+      +   '</div>'
       + '</div>'
-      + '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">'
+      + '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;align-self:flex-start;">'
       +   dept
       +   '<div class="caller-actions" onclick="event.stopPropagation()">'
       +     '<button class="cact-btn" title="Edit" onclick="callerFormEdit(\'' + escAttr(c.id) + '\')">'
@@ -5114,6 +5530,7 @@ function updateUsersNavBadge() {
   var count = callers.length;
   setEl('nav-users-count', count);
   setEl('nav-accounts-count', count);
+  if (currentView === 'users') setEl('topbar-title', 'Users (' + count + ')');
 }
 
 function renderUsersList() {
@@ -5911,13 +6328,13 @@ function syncMasterToDropdowns() {
   }
 
   // Institution — ticket form uses label as value; caller form must match
-  setSelect('f-institution', masterData.inst, 'Select institution…');
+  setSelect('f-institution', masterData.inst.map(function(x){ return {id:x.value,value:x.value}; }), 'Select institution…');
   setSelect('cf-institution', masterData.inst.map(function(x){ return {id:x.value,value:x.value}; }), 'Select institution…');
   setSelect('flt-inst',  masterData.inst.map(function(x){ return {id:x.value,value:x.value}; }), 'All Institutions');
   setSelect('rpt-inst',  masterData.inst.map(function(x){ return {id:x.value,value:x.value}; }), 'All Institutions');
 
-  // Department — same fix: store label not ID
-  setSelect('f-dept', masterData.dept, 'Select department…');
+  // Department — store label not ID so saved ticket.dept is human-readable
+  setSelect('f-dept', masterData.dept.map(function(x){ return {id:x.value,value:x.value}; }), 'Select department…');
   setSelect('cf-dept', masterData.dept.map(function(x){ return {id:x.value,value:x.value}; }), 'Select department…');
   setSelect('flt-dept',  masterData.dept.map(function(x){ return {id:x.value,value:x.value}; }), 'All Depts');
   setSelect('rpt-dept',  masterData.dept.map(function(x){ return {id:x.value,value:x.value}; }), 'All Departments');
@@ -6063,10 +6480,13 @@ function deleteSerialItem(id) {
 function switchMasterTab(tab) {
   document.getElementById('mtab-caller').classList.toggle('active',   tab === 'caller');
   document.getElementById('mtab-hardware').classList.toggle('active', tab === 'hardware');
+  document.getElementById('mtab-tech').classList.toggle('active',     tab === 'tech');
   document.getElementById('mtab-panel-caller').style.display   = tab === 'caller'   ? '' : 'none';
   document.getElementById('mtab-panel-hardware').style.display = tab === 'hardware' ? '' : 'none';
+  document.getElementById('mtab-panel-tech').style.display     = tab === 'tech'     ? '' : 'none';
   if (tab === 'caller')   { renderMasterList('inst'); renderMasterList('dept'); }
-  if (tab === 'hardware') { renderMasterList('tech'); renderMasterList('device'); renderMasterList('model'); renderSerialList(); onSerialModelChange(); }
+  if (tab === 'hardware') { renderMasterList('device'); renderMasterList('model'); renderSerialList(); onSerialModelChange(); }
+  if (tab === 'tech')     { renderMasterList('tech'); renderWorkloadSummary(); }
 }
 
 function renderMaster() {
